@@ -228,7 +228,7 @@ function openBranchModal(branch = null) {
 }
 </script>
 <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHmCt1bQGIJXTJHkkggsBzIqanAbdkfJk&callback=initMap">
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>
