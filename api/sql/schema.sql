@@ -91,6 +91,7 @@ CREATE TABLE `attendance_logs` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_employee_date` (`employee_id`, `date`),
   KEY `idx_date` (`date`),
+  KEY `idx_employee_id` (`employee_id`),
   CONSTRAINT `fk_attendance_employee` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -140,8 +141,8 @@ CREATE TABLE `leave_requests` (
   `admin_remarks` TEXT DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `fk_leave_employee` (`employee_id`),
-  KEY `idx_status` (`status`),
+  KEY `idx_employee_id` (`employee_id`),
+  KEY `idx_status_created` (`status`, `created_at`),
   CONSTRAINT `fk_leave_employee` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -164,6 +165,7 @@ CREATE TABLE `salary_slips` (
   `generated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_emp_month_year` (`employee_id`, `month`, `year`),
+  KEY `idx_year` (`year`),
   CONSTRAINT `fk_salary_employee` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -177,6 +179,7 @@ CREATE TABLE `holidays` (
   `date` DATE NOT NULL,
   `is_optional` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_branch_date` (`branch_id`, `date`),
   KEY `fk_holiday_branch` (`branch_id`),
   CONSTRAINT `fk_holiday_branch` FOREIGN KEY (`branch_id`) REFERENCES `branches` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -195,6 +198,7 @@ CREATE TABLE `notifications` (
   PRIMARY KEY (`id`),
   KEY `fk_notif_employee` (`employee_id`),
   KEY `idx_read` (`is_read`),
+  KEY `idx_created` (`created_at`),
   CONSTRAINT `fk_notif_employee` FOREIGN KEY (`employee_id`) REFERENCES `employees` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -223,7 +227,7 @@ CREATE TABLE `refresh_tokens` (
   `revoked` TINYINT(1) NOT NULL DEFAULT 0,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_token_hash` (`token_hash`),
+  UNIQUE KEY `uk_token_hash` (`token_hash`),
   KEY `idx_user` (`user_id`, `user_type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
