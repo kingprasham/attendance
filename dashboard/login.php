@@ -6,7 +6,7 @@ if (!empty($_SESSION['admin_id'])) {
     exit;
 }
 
-define('BASE_URL', rtrim(dirname($_SERVER['SCRIPT_NAME']), '/'));
+require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/db.php';
 
 $error = '';

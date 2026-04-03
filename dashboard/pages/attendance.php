@@ -1,6 +1,6 @@
 <?php
 session_start();
-define('BASE_URL', rtrim(str_repeat('../', substr_count(str_replace($_SERVER['DOCUMENT_ROOT'], '', __DIR__), '/')), '/') . rtrim(dirname(dirname($_SERVER['SCRIPT_NAME'])), '/'));
+require_once __DIR__ . '/../includes/config.php';
 
 require_once __DIR__ . '/../includes/auth_check.php';
 require_once __DIR__ . '/../includes/db.php';
