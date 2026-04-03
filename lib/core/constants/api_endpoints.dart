@@ -1,5 +1,5 @@
 class ApiEndpoints {
-  static const String baseUrl = 'https://yourdomain.com/api';
+  static const String baseUrl = 'https://mehrgrewal.com/attendance/api';
 
   // Auth
   static const String login = '/auth/login';

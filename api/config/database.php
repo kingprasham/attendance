@@ -10,8 +10,8 @@ function get_db_connection() {
 
     $host = 'localhost';
     $dbname = 'kalina_attendance';
-    $username = 'root';        // Update for GoDaddy
-    $password = '';             // Update for GoDaddy
+    $username = 'aaiacc_admin';
+    $password = 'Prasham123';
 
     try {
         $pdo = new PDO(
