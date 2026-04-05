@@ -35,7 +35,7 @@ $employees = $empStmt->fetchAll();
 $logSql = "SELECT al.*, e.id AS eid
            FROM attendance_logs al
            JOIN employees e ON al.employee_id = e.id
-           WHERE DATE(al.clock_in_time) = ? $branchWhere";
+           WHERE al.date = ? $branchWhere";
 $logStmt = $db->prepare($logSql);
 $logStmt->execute($params);
 $logs = [];
@@ -53,9 +53,14 @@ foreach ($employees as $emp) {
     elseif ($s === 'half_day') $halfDay++;
 }
 
-// Check if it's a holiday
-$holiday = $db->prepare("SELECT name FROM holidays WHERE date = ? AND (branch_id IS NULL OR branch_id = ?) LIMIT 1");
-$holiday->execute([$selectedDate, $selectedBranch ?: 0]);
+// Check if it's a holiday (global or branch-specific)
+if ($selectedBranch) {
+    $holiday = $db->prepare("SELECT name FROM holidays WHERE date = ? AND (branch_id IS NULL OR branch_id = ?) LIMIT 1");
+    $holiday->execute([$selectedDate, $selectedBranch]);
+} else {
+    $holiday = $db->prepare("SELECT name FROM holidays WHERE date = ? AND branch_id IS NULL LIMIT 1");
+    $holiday->execute([$selectedDate]);
+}
 $holidayName = $holiday->fetchColumn();
 
 require_once __DIR__ . '/../includes/header.php';
@@ -144,8 +149,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
                     $badges = ['present'=>'success','late'=>'warning','half_day'=>'info','absent'=>'danger'];
                     $badge  = $badges[$status] ?? 'secondary';
                     // Convert UTC clock times to IST for display
-                    $cinIST  = $log && $log['clock_in_time']  ? date('h:i A', strtotime($log['clock_in_time'])  + 19800) : '—';
-                    $coutIST = $log && $log['clock_out_time'] ? date('h:i A', strtotime($log['clock_out_time']) + 19800) : '—';
+                    $cinIST  = $log && $log['clock_in']  ? date('h:i A', strtotime($log['clock_in'])  + 19800) : '—';
+                    $coutIST = $log && $log['clock_out'] ? date('h:i A', strtotime($log['clock_out']) + 19800) : '—';
                 ?>
                 <tr>
                     <td><span class="badge bg-secondary"><?= htmlspecialchars($emp['employee_code']) ?></span></td>

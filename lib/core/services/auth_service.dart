@@ -7,14 +7,14 @@ class AuthService {
   final SecureStorageService _storage = SecureStorageService();
 
   Future<Map<String, dynamic>> login({
-    required String username,
+    required String email,
     required String password,
     required String deviceId,
   }) async {
     final response = await _api.post(
       ApiEndpoints.login,
       data: {
-        'username': username,
+        'email': email,
         'password': password,
         'device_id': deviceId,
       },

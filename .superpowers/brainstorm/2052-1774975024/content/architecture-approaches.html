@@ -1,0 +1,71 @@
+<h2>Architecture Approaches for Kalina Engineering Attendance System</h2>
+<p class="subtitle">Choose the backend architecture that fits your GoDaddy shared hosting</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Vanilla PHP + Custom REST API</h3>
+      <p><strong>Recommended</strong> &mdash; Pure PHP, no framework overhead</p>
+      <ul style="margin:8px 0;padding-left:20px;color:#aaa;font-size:14px;">
+        <li>Custom router + controller pattern (lightweight MVC)</li>
+        <li>JWT auth via <code>firebase/php-jwt</code> (single file include)</li>
+        <li>Direct MySQL with PDO (prepared statements)</li>
+        <li>Works on any shared hosting &mdash; no Composer SSH needed</li>
+        <li>Full control, no framework learning curve</li>
+        <li>~15-20 PHP files for the entire API</li>
+      </ul>
+      <div class="pros-cons" style="margin-top:12px;">
+        <div class="pros"><h4>Pros</h4><ul><li>Zero dependencies issues</li><li>Easy to deploy via FTP</li><li>Complete control over code</li><li>Fastest execution on shared hosting</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>More boilerplate to write</li><li>No built-in ORM or validation</li><li>Manual CORS, rate limiting</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>CodeIgniter 4 Framework</h3>
+      <p>Lightweight PHP framework with REST support</p>
+      <ul style="margin:8px 0;padding-left:20px;color:#aaa;font-size:14px;">
+        <li>Built-in routing, validation, ORM (Query Builder)</li>
+        <li>REST API via <code>codeigniter-restserver</code></li>
+        <li>Can be installed without Composer (manual download)</li>
+        <li>Good documentation, active community</li>
+        <li>Built-in security features (CSRF, XSS filtering)</li>
+      </ul>
+      <div class="pros-cons" style="margin-top:12px;">
+        <div class="pros"><h4>Pros</h4><ul><li>Faster development with built-in tools</li><li>Input validation out of the box</li><li>Query builder prevents SQL injection</li><li>Migration system for DB changes</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Framework overhead (~5MB)</li><li>Learning curve if unfamiliar</li><li>Some features may need Composer</li><li>Heavier than needed for a REST API</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Slim Framework (Micro-framework)</h3>
+      <p>Minimal PHP framework built specifically for APIs</p>
+      <ul style="margin:8px 0;padding-left:20px;color:#aaa;font-size:14px;">
+        <li>Purpose-built for REST APIs</li>
+        <li>PSR-7 HTTP message interface</li>
+        <li>Middleware support (auth, CORS, rate limiting)</li>
+        <li>Requires Composer installation</li>
+      </ul>
+      <div class="pros-cons" style="margin-top:12px;">
+        <div class="pros"><h4>Pros</h4><ul><li>Clean middleware architecture</li><li>Modern PHP patterns</li><li>Lightweight (~1MB)</li><li>Great for APIs specifically</li></ul></div>
+        <div class="cons"><h4>Cons</h4><ul><li>Requires Composer (may need SSH on GoDaddy)</li><li>No ORM included</li><li>Smaller community than CI4</li><li>May not work on all shared hosting plans</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:30px;padding:20px;background:#1a1a2e;border-radius:12px;border:1px solid #333;">
+  <h3 style="margin-top:0;color:#4A9BD9;">Why I recommend Option A (Vanilla PHP)</h3>
+  <p style="color:#ccc;line-height:1.6;">
+    For GoDaddy shared hosting, <strong>vanilla PHP gives you zero deployment friction</strong>.
+    You upload files via FTP/File Manager and it works. No Composer, no SSH, no server configuration.
+    The API is small enough (~15-20 endpoints) that a framework is overkill.
+    We'll structure it with a clean MVC-like pattern so it's maintainable without the framework overhead.
+  </p>
+</div>

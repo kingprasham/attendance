@@ -64,7 +64,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final deviceId = await _deviceService.getDeviceId();
       final data = await _authService.login(
-        username: username,
+        email: username,
         password: password,
         deviceId: deviceId,
       );

@@ -33,6 +33,8 @@ CREATE TABLE `branches` (
   `latitude` DECIMAL(10,8) NOT NULL,
   `longitude` DECIMAL(11,8) NOT NULL,
   `radius_meters` INT NOT NULL DEFAULT 200,
+  `late_threshold_hour` TINYINT UNSIGNED NOT NULL DEFAULT 9,
+  `late_threshold_minute` TINYINT UNSIGNED NOT NULL DEFAULT 30,
   `is_active` TINYINT(1) NOT NULL DEFAULT 1,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
@@ -52,7 +54,7 @@ CREATE TABLE `employees` (
   `department` VARCHAR(100) DEFAULT NULL,
   `branch_id` INT NOT NULL,
   `date_of_joining` DATE NOT NULL,
-  `employment_type` ENUM('full','part','contract') NOT NULL DEFAULT 'full',
+  `employment_type` ENUM('full_time','part_time','contract') NOT NULL DEFAULT 'full_time',
   `monthly_salary` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
   `bank_account` VARCHAR(20) DEFAULT NULL,
   `ifsc_code` VARCHAR(11) DEFAULT NULL,
@@ -137,8 +139,9 @@ CREATE TABLE `leave_requests` (
   `end_date` DATE NOT NULL,
   `is_half_day` TINYINT(1) NOT NULL DEFAULT 0,
   `reason` TEXT DEFAULT NULL,
-  `status` ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+  `status` ENUM('pending','approved','rejected','cancelled') NOT NULL DEFAULT 'pending',
   `admin_remarks` TEXT DEFAULT NULL,
+  `reviewed_at` DATETIME DEFAULT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_employee_id` (`employee_id`),
@@ -155,9 +158,9 @@ CREATE TABLE `salary_slips` (
   `month` TINYINT NOT NULL,
   `year` YEAR NOT NULL,
   `total_days` INT NOT NULL,
-  `present_days` INT NOT NULL DEFAULT 0,
-  `leave_days` INT NOT NULL DEFAULT 0,
-  `lwp_days` INT NOT NULL DEFAULT 0,
+  `present_days` DECIMAL(5,1) NOT NULL DEFAULT 0,
+  `leave_days` DECIMAL(5,1) NOT NULL DEFAULT 0,
+  `lwp_days` DECIMAL(5,1) NOT NULL DEFAULT 0,
   `overtime_hours` DECIMAL(5,2) NOT NULL DEFAULT 0.00,
   `gross_salary` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
   `deductions` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
@@ -174,14 +177,13 @@ CREATE TABLE `salary_slips` (
 -- ============================================
 CREATE TABLE `holidays` (
   `id` INT NOT NULL AUTO_INCREMENT,
-  `branch_id` INT NOT NULL,
+  `branch_id` INT DEFAULT NULL,
   `name` VARCHAR(100) NOT NULL,
   `date` DATE NOT NULL,
   `is_optional` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_branch_date` (`branch_id`, `date`),
-  KEY `fk_holiday_branch` (`branch_id`),
-  CONSTRAINT `fk_holiday_branch` FOREIGN KEY (`branch_id`) REFERENCES `branches` (`id`)
+  KEY `idx_holiday_branch` (`branch_id`),
+  KEY `idx_holiday_date` (`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================
@@ -237,3 +239,23 @@ CREATE TABLE `refresh_tokens` (
 -- ============================================
 INSERT INTO `admins` (`name`, `email`, `password`) VALUES
 ('Super Admin', 'admin@kalinaengineering.com', '$2y$12$LJ3m4ys3Gz8y6C5FMqjXaeJD7VhWOHRqFgTfVKBbSE4rMHWyFO2tW');
+
+-- ============================================
+-- ALTER STATEMENTS (run if DB already imported)
+-- ============================================
+-- ALTER TABLE `branches`
+--   ADD COLUMN `late_threshold_hour` TINYINT UNSIGNED NOT NULL DEFAULT 9 AFTER `radius_meters`,
+--   ADD COLUMN `late_threshold_minute` TINYINT UNSIGNED NOT NULL DEFAULT 30 AFTER `late_threshold_hour`;
+-- ALTER TABLE `employees`
+--   MODIFY COLUMN `employment_type` ENUM('full_time','part_time','contract') NOT NULL DEFAULT 'full_time';
+-- ALTER TABLE `leave_requests`
+--   ADD COLUMN `reviewed_at` DATETIME DEFAULT NULL AFTER `admin_remarks`,
+--   MODIFY COLUMN `status` ENUM('pending','approved','rejected','cancelled') NOT NULL DEFAULT 'pending';
+-- ALTER TABLE `holidays`
+--   MODIFY COLUMN `branch_id` INT DEFAULT NULL,
+--   DROP FOREIGN KEY `fk_holiday_branch`,
+--   DROP KEY `uk_branch_date`;
+-- ALTER TABLE `salary_slips`
+--   MODIFY COLUMN `present_days` DECIMAL(5,1) NOT NULL DEFAULT 0,
+--   MODIFY COLUMN `leave_days` DECIMAL(5,1) NOT NULL DEFAULT 0,
+--   MODIFY COLUMN `lwp_days` DECIMAL(5,1) NOT NULL DEFAULT 0;

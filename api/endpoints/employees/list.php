@@ -17,11 +17,12 @@ $sql = "SELECT e.id, e.employee_code, e.full_name, e.email, e.phone,
                e.monthly_salary, e.is_active, e.device_id IS NOT NULL as device_bound,
                b.name as branch_name
         FROM employees e
-        JOIN branches b ON b.id = e.branch_id";
+        JOIN branches b ON b.id = e.branch_id
+        WHERE e.is_active = 1";
 $params = [];
 
 if ($branch_id) {
-    $sql .= " WHERE e.branch_id = :bid";
+    $sql .= " AND e.branch_id = :bid";
     $params[':bid'] = (int)$branch_id;
 }
 

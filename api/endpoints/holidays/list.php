@@ -15,7 +15,7 @@ $emp = $stmt->fetch();
 
 $stmt2 = $pdo->prepare(
     "SELECT id, name, date, is_optional FROM holidays
-     WHERE branch_id = :bid AND YEAR(date) = :year
+     WHERE (branch_id IS NULL OR branch_id = :bid) AND YEAR(date) = :year
      ORDER BY date ASC"
 );
 $stmt2->execute([':bid' => $emp['branch_id'], ':year' => (int)$year]);

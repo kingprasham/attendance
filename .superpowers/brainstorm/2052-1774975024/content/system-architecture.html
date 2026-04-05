@@ -1,0 +1,130 @@
+<h2>System Architecture — Kalina Engineering Attendance</h2>
+<p class="subtitle">Section 1 of 5 — How all the pieces connect</p>
+
+<!-- Architecture Diagram -->
+<div class="mockup">
+  <div class="mockup-header">System Architecture Diagram</div>
+  <div class="mockup-body" style="padding:30px;background:#0d1117;">
+
+    <!-- Top Row: Clients -->
+    <div style="display:flex;justify-content:center;gap:40px;margin-bottom:30px;">
+      <!-- Flutter App -->
+      <div style="background:#0055A4;border:2px solid #4A9BD9;border-radius:12px;padding:20px 30px;text-align:center;min-width:200px;">
+        <div style="font-size:28px;margin-bottom:8px;">📱</div>
+        <div style="font-weight:bold;color:white;font-size:16px;">Flutter Mobile App</div>
+        <div style="color:#8bb8e8;font-size:12px;margin-top:6px;">Employee-facing</div>
+        <div style="color:#6a9fd8;font-size:11px;margin-top:4px;">Biometrics • GPS • Attendance</div>
+      </div>
+
+      <!-- Admin Dashboard -->
+      <div style="background:#0055A4;border:2px solid #4A9BD9;border-radius:12px;padding:20px 30px;text-align:center;min-width:200px;">
+        <div style="font-size:28px;margin-bottom:8px;">🖥️</div>
+        <div style="font-weight:bold;color:white;font-size:16px;">Admin Dashboard</div>
+        <div style="color:#8bb8e8;font-size:12px;margin-top:6px;">Superadmin only</div>
+        <div style="color:#6a9fd8;font-size:11px;margin-top:4px;">HTML • CSS • JS • PHP</div>
+      </div>
+    </div>
+
+    <!-- Arrow Down -->
+    <div style="text-align:center;color:#4A9BD9;font-size:24px;margin:10px 0;">▼ HTTPS (REST API) ▼</div>
+
+    <!-- Middle: API Layer -->
+    <div style="background:#1a2332;border:2px solid #4A9BD9;border-radius:12px;padding:20px;margin:20px 40px;text-align:center;">
+      <div style="font-weight:bold;color:#4A9BD9;font-size:18px;margin-bottom:12px;">PHP REST API (GoDaddy Shared Hosting)</div>
+      <div style="display:flex;justify-content:center;gap:15px;flex-wrap:wrap;">
+        <span style="background:#0055A4;color:white;padding:6px 14px;border-radius:20px;font-size:12px;">JWT Auth</span>
+        <span style="background:#0055A4;color:white;padding:6px 14px;border-radius:20px;font-size:12px;">Geofence Validation</span>
+        <span style="background:#0055A4;color:white;padding:6px 14px;border-radius:20px;font-size:12px;">Device Binding</span>
+        <span style="background:#0055A4;color:white;padding:6px 14px;border-radius:20px;font-size:12px;">Rate Limiting</span>
+        <span style="background:#0055A4;color:white;padding:6px 14px;border-radius:20px;font-size:12px;">Leave Management</span>
+        <span style="background:#0055A4;color:white;padding:6px 14px;border-radius:20px;font-size:12px;">Payroll Engine</span>
+      </div>
+    </div>
+
+    <!-- Arrow Down -->
+    <div style="text-align:center;color:#4A9BD9;font-size:24px;margin:10px 0;">▼ PDO (Prepared Statements) ▼</div>
+
+    <!-- Bottom: Database -->
+    <div style="display:flex;justify-content:center;gap:40px;margin-top:20px;">
+      <div style="background:#1a2332;border:2px solid #e8a838;border-radius:12px;padding:20px 30px;text-align:center;min-width:180px;">
+        <div style="font-size:28px;margin-bottom:8px;">🗄️</div>
+        <div style="font-weight:bold;color:#e8a838;font-size:16px;">MySQL Database</div>
+        <div style="color:#c4943a;font-size:11px;margin-top:4px;">Employees • Attendance • Leaves • Salary</div>
+      </div>
+
+      <div style="background:#1a2332;border:2px solid #e85858;border-radius:12px;padding:20px 30px;text-align:center;min-width:180px;">
+        <div style="font-size:28px;margin-bottom:8px;">🔔</div>
+        <div style="font-weight:bold;color:#e85858;font-size:16px;">Firebase FCM</div>
+        <div style="color:#c44a4a;font-size:11px;margin-top:4px;">Push Notifications</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Key Flows -->
+<div style="margin-top:30px;">
+  <h3>Key Data Flows</h3>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+
+    <div style="background:#1a1a2e;border:1px solid #333;border-radius:10px;padding:16px;">
+      <h4 style="color:#4A9BD9;margin-top:0;">Clock In Flow</h4>
+      <ol style="color:#ccc;font-size:13px;line-height:1.8;padding-left:20px;">
+        <li>Employee opens app → biometric prompt</li>
+        <li>Fingerprint verified locally</li>
+        <li>App reads GPS coordinates</li>
+        <li>Checks for mock/fake location</li>
+        <li>Sends to API: lat, lng, device_id, token</li>
+        <li>Server validates: JWT → device → geofence</li>
+        <li>Server records attendance in MySQL</li>
+        <li>Returns success/error to app</li>
+      </ol>
+    </div>
+
+    <div style="background:#1a1a2e;border:1px solid #333;border-radius:10px;padding:16px;">
+      <h4 style="color:#4A9BD9;margin-top:0;">Leave Application Flow</h4>
+      <ol style="color:#ccc;font-size:13px;line-height:1.8;padding-left:20px;">
+        <li>Employee selects leave type & dates</li>
+        <li>App checks remaining balance locally</li>
+        <li>Sends leave request to API</li>
+        <li>Server validates balance & conflicts</li>
+        <li>Stores as "pending" in MySQL</li>
+        <li>Push notification to admin</li>
+        <li>Admin approves/rejects from dashboard</li>
+        <li>Push notification back to employee</li>
+      </ol>
+    </div>
+
+    <div style="background:#1a1a2e;border:1px solid #333;border-radius:10px;padding:16px;">
+      <h4 style="color:#4A9BD9;margin-top:0;">Payroll Calculation</h4>
+      <ol style="color:#ccc;font-size:13px;line-height:1.8;padding-left:20px;">
+        <li>Admin triggers monthly payroll</li>
+        <li>System counts present days per employee</li>
+        <li>Deducts approved leaves from balance</li>
+        <li>Calculates: (monthly salary / total days) × present days</li>
+        <li>Deducts LWP (unpaid leave) days</li>
+        <li>Generates salary slip PDF</li>
+        <li>Employee views slip in app</li>
+      </ol>
+    </div>
+
+    <div style="background:#1a1a2e;border:1px solid #333;border-radius:10px;padding:16px;">
+      <h4 style="color:#4A9BD9;margin-top:0;">Device Binding Flow</h4>
+      <ol style="color:#ccc;font-size:13px;line-height:1.8;padding-left:20px;">
+        <li>Admin creates employee (username + password)</li>
+        <li>Employee installs app, enters credentials</li>
+        <li>First login: app registers device ID with server</li>
+        <li>Server binds employee → device_id</li>
+        <li>Subsequent logins: server verifies device match</li>
+        <li>New device? Admin must reset binding</li>
+        <li>Prevents buddy-punching across devices</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:24px;padding:16px;background:#1a2332;border-radius:10px;border:1px solid #0055A4;">
+  <p style="color:#8bb8e8;margin:0;font-size:14px;">
+    <strong style="color:#4A9BD9;">Tech Stack Summary:</strong> Flutter 3.27+ (Riverpod) → PHP REST API (Vanilla, JWT) → MySQL | Firebase FCM for notifications | Google Maps API (admin only) | Geolocator + local_auth + persistent_device_id (Flutter)
+  </p>
+</div>

@@ -46,7 +46,7 @@ if ($stmt2->fetch()) {
 
 // 3. Geofence check
 $stmt3 = $pdo->prepare(
-    "SELECT latitude, longitude, radius_meters FROM branches WHERE id = :bid AND is_active = 1"
+    "SELECT latitude, longitude, radius_meters, late_threshold_hour, late_threshold_minute FROM branches WHERE id = :bid AND is_active = 1"
 );
 $stmt3->execute([':bid' => $employee['branch_id']]);
 $branch = $stmt3->fetch();
@@ -60,15 +60,18 @@ if (!is_within_geofence($lat, $lng, $branch['latitude'], $branch['longitude'], $
     error_response("Cannot mark attendance. You are {$distance}m from office. Required: within {$branch['radius_meters']}m.", 403);
 }
 
-// 4. Determine if late
+// 4. Determine if late (use branch-specific threshold)
 $now_utc = gmdate('Y-m-d H:i:s');
 $now_ist = new DateTime($now_utc, new DateTimeZone('UTC'));
 $now_ist->setTimezone(new DateTimeZone(APP_TIMEZONE));
 $hour = (int)$now_ist->format('H');
 $minute = (int)$now_ist->format('i');
 
+$lateHour   = (int)($branch['late_threshold_hour']   ?? DEFAULT_LATE_HOUR);
+$lateMinute = (int)($branch['late_threshold_minute'] ?? DEFAULT_LATE_MINUTE);
+
 $status = 'present';
-if ($hour > DEFAULT_LATE_HOUR || ($hour === DEFAULT_LATE_HOUR && $minute > DEFAULT_LATE_MINUTE)) {
+if ($hour > $lateHour || ($hour === $lateHour && $minute > $lateMinute)) {
     $status = 'late';
 }
 

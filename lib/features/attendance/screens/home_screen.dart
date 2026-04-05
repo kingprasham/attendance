@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:geolocator/geolocator.dart';
 import '../providers/attendance_provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../features/auth/providers/auth_provider.dart';
@@ -14,6 +15,13 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  String _greeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -21,6 +29,92 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ref.read(attendanceProvider.notifier).loadToday();
       ref.read(notificationProvider.notifier).loadNotifications();
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkLocationPermission());
+  }
+
+  Future<void> _checkLocationPermission() async {
+    if (!mounted) return;
+
+    // Check permission
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (!mounted) return;
+
+    if (permission == LocationPermission.deniedForever) {
+      _showLocationDialog(
+        title: 'Location Permission Required',
+        message:
+            'This app needs location access to record attendance. Please enable it in Settings.',
+        actionLabel: 'Open Settings',
+        onAction: () => Geolocator.openAppSettings(),
+      );
+      return;
+    }
+
+    if (permission == LocationPermission.denied) {
+      _showLocationDialog(
+        title: 'Location Permission Required',
+        message:
+            'Location permission is required to clock in and out. Please grant it to continue.',
+        actionLabel: 'Grant Permission',
+        onAction: () {
+          Navigator.of(context).pop();
+          _checkLocationPermission();
+        },
+      );
+      return;
+    }
+
+    // Check GPS service
+    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!mounted) return;
+    if (!serviceEnabled) {
+      _showLocationDialog(
+        title: 'GPS is Disabled',
+        message:
+            'Please turn on GPS (Location Services) to use attendance features.',
+        actionLabel: 'Enable GPS',
+        onAction: () async {
+          await Geolocator.openLocationSettings();
+          if (mounted) Navigator.of(context).pop();
+          await Future.delayed(const Duration(seconds: 1));
+          _checkLocationPermission();
+        },
+      );
+    }
+  }
+
+  void _showLocationDialog({
+    required String title,
+    required String message,
+    required String actionLabel,
+    required VoidCallback onAction,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            const Icon(Icons.location_off, color: AppColors.error),
+            const SizedBox(width: 8),
+            Expanded(child: Text(title, style: const TextStyle(fontSize: 16))),
+          ],
+        ),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: onAction,
+            style: TextButton.styleFrom(foregroundColor: AppColors.primaryDark),
+            child: Text(actionLabel),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -59,7 +153,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Good Morning', style: TextStyle(fontSize: 12, color: Color(0xCCFFFFFF))),
+            Text(_greeting(), style: const TextStyle(fontSize: 12, color: Color(0xCCFFFFFF))),
             Text(
               authState.fullName ?? 'Employee',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
@@ -76,7 +170,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.notifications_outlined),
-                  onPressed: () => context.go('/notifications'),
+                  onPressed: () => context.push('/notifications'),
                 ),
                 if (unread > 0)
                   Positioned(
@@ -163,7 +257,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       icon: Icons.calendar_month,
                       label: 'History',
                       color: AppColors.primaryLight,
-                      onTap: () => context.go('/history'),
+                      onTap: () => context.push('/history'),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -172,7 +266,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       icon: Icons.beach_access,
                       label: 'Apply Leave',
                       color: AppColors.warning,
-                      onTap: () => context.go('/apply-leave'),
+                      onTap: () => context.push('/apply-leave'),
                     ),
                   ),
                   const SizedBox(width: 12),

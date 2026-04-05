@@ -45,10 +45,10 @@ for ($d = 1; $d <= $total_days_in_month; $d++) {
     }
 }
 
-// Subtract holidays
+// Subtract mandatory holidays (branch-specific + global)
 $hol_stmt = $pdo->prepare(
     "SELECT COUNT(*) as cnt FROM holidays
-     WHERE branch_id = :bid AND MONTH(date) = :m AND YEAR(date) = :y
+     WHERE (branch_id = :bid OR branch_id IS NULL) AND MONTH(date) = :m AND YEAR(date) = :y
      AND is_optional = 0 AND DAYOFWEEK(date) != 1"
 );
 $hol_stmt->execute([':bid' => $branch_id, ':m' => $month, ':y' => $year]);
@@ -74,13 +74,15 @@ try {
             continue; // Skip already generated
         }
 
-        // Count present days
+        // Count present days (half_day = 0.5, present/late = 1.0)
         $att_stmt = $pdo->prepare(
-            "SELECT COUNT(*) as cnt FROM attendance_logs
+            "SELECT
+               SUM(CASE WHEN status = 'half_day' THEN 0.5 ELSE 1.0 END) as cnt
+             FROM attendance_logs
              WHERE employee_id = :eid AND MONTH(date) = :m AND YEAR(date) = :y"
         );
         $att_stmt->execute([':eid' => $emp['id'], ':m' => $month, ':y' => $year]);
-        $present_days = (int)$att_stmt->fetch()['cnt'];
+        $present_days = (float)($att_stmt->fetch()['cnt'] ?? 0);
 
         // Count approved paid leave days
         $first_of_month = sprintf('%04d-%02d-01', $year, $month);
@@ -102,7 +104,7 @@ try {
             ':date3' => $first_of_month,
             ':date4' => $first_of_month,
         ]);
-        $leave_days = (int)($leave_stmt->fetch()['leave_days'] ?? 0);
+        $leave_days = (float)($leave_stmt->fetch()['leave_days'] ?? 0);
 
         // Count LWP days
         $lwp_stmt = $pdo->prepare(
@@ -123,7 +125,7 @@ try {
             ':date3' => $first_of_month,
             ':date4' => $first_of_month,
         ]);
-        $lwp_days = (int)($lwp_stmt->fetch()['lwp_days'] ?? 0);
+        $lwp_days = (float)($lwp_stmt->fetch()['lwp_days'] ?? 0);
 
         // Calculate salary
         $per_day = $emp['monthly_salary'] / $working_days;

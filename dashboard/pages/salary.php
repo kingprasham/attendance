@@ -29,11 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'gener
     }
     $holidayCount = $db->prepare("
         SELECT COUNT(*) FROM holidays
-        WHERE MONTH(date) = ? AND YEAR(date) = ?
-        AND (branch_id IS NULL OR branch_id = ?)
-        AND DAYOFWEEK(date) != 1
+        WHERE (branch_id IS NULL OR branch_id = ?)
+        AND MONTH(date) = ? AND YEAR(date) = ?
+        AND is_optional = 0 AND DAYOFWEEK(date) != 1
     ");
-    $holidayCount->execute([$month, $year, $branchId]);
+    $holidayCount->execute([$branchId, $month, $year]);
     $holidays    = (int)$holidayCount->fetchColumn();
     $workingDays = $daysInMonth - $sundays - $holidays;
     if ($workingDays < 1) $workingDays = 1;
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'gener
         // Present days (clock_in records)
         $presentStmt = $db->prepare("
             SELECT COUNT(*) FROM attendance_logs
-            WHERE employee_id = ? AND MONTH(clock_in_time) = ? AND YEAR(clock_in_time) = ?
+            WHERE employee_id = ? AND MONTH(date) = ? AND YEAR(date) = ?
             AND status IN ('present','late')
         ");
         $presentStmt->execute([$emp['id'], $month, $year]);
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'gener
 
         $halfDayStmt = $db->prepare("
             SELECT COUNT(*) FROM attendance_logs
-            WHERE employee_id = ? AND MONTH(clock_in_time) = ? AND YEAR(clock_in_time) = ?
+            WHERE employee_id = ? AND MONTH(date) = ? AND YEAR(date) = ?
             AND status = 'half_day'
         ");
         $halfDayStmt->execute([$emp['id'], $month, $year]);

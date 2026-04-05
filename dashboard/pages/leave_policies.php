@@ -20,9 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'save'
             $quota    = (int)($_POST["quota_{$type}"] ?? 0);
             $carryFwd = (int)($_POST["carry_{$type}"] ?? 0);
             $db->prepare("
-                INSERT INTO leave_policies (branch_id, leave_type, annual_quota, carry_forward_limit)
+                INSERT INTO leave_policies (branch_id, leave_type, annual_quota, max_carry)
                 VALUES (?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE annual_quota = VALUES(annual_quota), carry_forward_limit = VALUES(carry_forward_limit)
+                ON DUPLICATE KEY UPDATE annual_quota = VALUES(annual_quota), max_carry = VALUES(max_carry)
             ")->execute([$branchId, $type, $quota, $carryFwd]);
         }
         $msg = 'Leave policies saved for selected branch.';
@@ -107,7 +107,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                             <input type="number" name="carry_<?= $type ?>"
                                    class="form-control form-control-sm"
                                    style="max-width:100px" min="0" max="365"
-                                   value="<?= $policies[$type]['carry_forward_limit'] ?? 0 ?>">
+                                   value="<?= $policies[$type]['max_carry'] ?? 0 ?>">
                         </td>
                     </tr>
                 <?php endforeach; ?>

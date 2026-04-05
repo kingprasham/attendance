@@ -1,0 +1,201 @@
+<h2>Database Schema — Kalina Engineering Attendance</h2>
+<p class="subtitle">Section 2 of 5 — MySQL Tables and Relationships</p>
+
+<!-- ER Diagram -->
+<div class="mockup">
+  <div class="mockup-header">Entity Relationship Overview</div>
+  <div class="mockup-body" style="padding:24px;background:#0d1117;">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+
+      <!-- Admin -->
+      <div style="background:#1a2332;border:2px solid #e8a838;border-radius:10px;padding:14px;">
+        <h4 style="color:#e8a838;margin:0 0 10px 0;font-size:14px;">🔑 admins</h4>
+        <div style="font-size:12px;color:#ccc;line-height:1.7;">
+          <code style="color:#4A9BD9;">id</code> INT PK AUTO<br>
+          <code style="color:#4A9BD9;">name</code> VARCHAR(100)<br>
+          <code style="color:#4A9BD9;">email</code> VARCHAR(150) UNIQUE<br>
+          <code style="color:#4A9BD9;">password</code> VARCHAR(255) hash<br>
+          <code style="color:#4A9BD9;">created_at</code> TIMESTAMP
+        </div>
+      </div>
+
+      <!-- Branches -->
+      <div style="background:#1a2332;border:2px solid #0055A4;border-radius:10px;padding:14px;">
+        <h4 style="color:#4A9BD9;margin:0 0 10px 0;font-size:14px;">🏭 branches</h4>
+        <div style="font-size:12px;color:#ccc;line-height:1.7;">
+          <code style="color:#4A9BD9;">id</code> INT PK AUTO<br>
+          <code style="color:#4A9BD9;">name</code> VARCHAR(100)<br>
+          <code style="color:#4A9BD9;">address</code> TEXT<br>
+          <code style="color:#4A9BD9;">latitude</code> DECIMAL(10,8)<br>
+          <code style="color:#4A9BD9;">longitude</code> DECIMAL(11,8)<br>
+          <code style="color:#4A9BD9;">radius_meters</code> INT<br>
+          <code style="color:#4A9BD9;">is_active</code> TINYINT(1)<br>
+          <code style="color:#4A9BD9;">created_at</code> TIMESTAMP
+        </div>
+      </div>
+
+      <!-- Leave Policies -->
+      <div style="background:#1a2332;border:2px solid #8b5cf6;border-radius:10px;padding:14px;">
+        <h4 style="color:#8b5cf6;margin:0 0 10px 0;font-size:14px;">📋 leave_policies</h4>
+        <div style="font-size:12px;color:#ccc;line-height:1.7;">
+          <code style="color:#4A9BD9;">id</code> INT PK AUTO<br>
+          <code style="color:#4A9BD9;">branch_id</code> FK → branches<br>
+          <code style="color:#4A9BD9;">leave_type</code> ENUM(CL,SL,EL,CO,LWP)<br>
+          <code style="color:#4A9BD9;">annual_quota</code> INT<br>
+          <code style="color:#4A9BD9;">carry_forward</code> TINYINT(1)<br>
+          <code style="color:#4A9BD9;">max_carry</code> INT
+        </div>
+      </div>
+
+      <!-- Employees -->
+      <div style="background:#1a2332;border:2px solid #10b981;border-radius:10px;padding:14px;grid-column:span 2;">
+        <h4 style="color:#10b981;margin:0 0 10px 0;font-size:14px;">👤 employees</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:#ccc;line-height:1.7;">
+          <div>
+            <strong style="color:#10b981;font-size:11px;">BASIC INFO</strong><br>
+            <code style="color:#4A9BD9;">id</code> INT PK AUTO<br>
+            <code style="color:#4A9BD9;">employee_code</code> VARCHAR(20) UNIQUE<br>
+            <code style="color:#4A9BD9;">full_name</code> VARCHAR(100)<br>
+            <code style="color:#4A9BD9;">email</code> VARCHAR(150)<br>
+            <code style="color:#4A9BD9;">phone</code> VARCHAR(15)<br>
+            <code style="color:#4A9BD9;">profile_photo</code> VARCHAR(255)<br>
+            <code style="color:#4A9BD9;">designation</code> VARCHAR(100)<br>
+            <code style="color:#4A9BD9;">department</code> VARCHAR(100)<br>
+            <code style="color:#4A9BD9;">branch_id</code> FK → branches
+          </div>
+          <div>
+            <strong style="color:#10b981;font-size:11px;">EMPLOYMENT & SALARY</strong><br>
+            <code style="color:#4A9BD9;">date_of_joining</code> DATE<br>
+            <code style="color:#4A9BD9;">employment_type</code> ENUM(full,part,contract)<br>
+            <code style="color:#4A9BD9;">monthly_salary</code> DECIMAL(12,2)<br>
+            <code style="color:#4A9BD9;">bank_account</code> VARCHAR(20)<br>
+            <code style="color:#4A9BD9;">ifsc_code</code> VARCHAR(11)<br>
+            <code style="color:#4A9BD9;">pan_number</code> VARCHAR(10)<br>
+            <code style="color:#4A9BD9;">aadhar_number</code> VARCHAR(12)<br>
+            <code style="color:#4A9BD9;">username</code> VARCHAR(50) UNIQUE<br>
+            <code style="color:#4A9BD9;">password</code> VARCHAR(255) hash<br>
+            <code style="color:#4A9BD9;">device_id</code> VARCHAR(255)<br>
+            <code style="color:#4A9BD9;">fcm_token</code> VARCHAR(255)<br>
+            <code style="color:#4A9BD9;">is_active</code> TINYINT(1)<br>
+            <code style="color:#4A9BD9;">created_at</code> TIMESTAMP
+          </div>
+        </div>
+      </div>
+
+      <!-- Holidays -->
+      <div style="background:#1a2332;border:2px solid #f59e0b;border-radius:10px;padding:14px;">
+        <h4 style="color:#f59e0b;margin:0 0 10px 0;font-size:14px;">📅 holidays</h4>
+        <div style="font-size:12px;color:#ccc;line-height:1.7;">
+          <code style="color:#4A9BD9;">id</code> INT PK AUTO<br>
+          <code style="color:#4A9BD9;">branch_id</code> FK → branches<br>
+          <code style="color:#4A9BD9;">name</code> VARCHAR(100)<br>
+          <code style="color:#4A9BD9;">date</code> DATE<br>
+          <code style="color:#4A9BD9;">is_optional</code> TINYINT(1)
+        </div>
+      </div>
+
+      <!-- Attendance Logs -->
+      <div style="background:#1a2332;border:2px solid #ef4444;border-radius:10px;padding:14px;">
+        <h4 style="color:#ef4444;margin:0 0 10px 0;font-size:14px;">⏰ attendance_logs</h4>
+        <div style="font-size:12px;color:#ccc;line-height:1.7;">
+          <code style="color:#4A9BD9;">id</code> INT PK AUTO<br>
+          <code style="color:#4A9BD9;">employee_id</code> FK → employees<br>
+          <code style="color:#4A9BD9;">date</code> DATE<br>
+          <code style="color:#4A9BD9;">clock_in</code> DATETIME (UTC)<br>
+          <code style="color:#4A9BD9;">clock_out</code> DATETIME (UTC)<br>
+          <code style="color:#4A9BD9;">clock_in_lat</code> DECIMAL(10,8)<br>
+          <code style="color:#4A9BD9;">clock_in_lng</code> DECIMAL(11,8)<br>
+          <code style="color:#4A9BD9;">clock_out_lat</code> DECIMAL(10,8)<br>
+          <code style="color:#4A9BD9;">clock_out_lng</code> DECIMAL(11,8)<br>
+          <code style="color:#4A9BD9;">device_id</code> VARCHAR(255)<br>
+          <code style="color:#4A9BD9;">status</code> ENUM(present,half_day,late)<br>
+          <code style="color:#4A9BD9;">work_hours</code> DECIMAL(4,2)<br>
+          <code style="color:#4A9BD9;">created_at</code> TIMESTAMP
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:#888;">UNIQUE(employee_id, date)</div>
+      </div>
+
+      <!-- Leave Requests -->
+      <div style="background:#1a2332;border:2px solid #8b5cf6;border-radius:10px;padding:14px;">
+        <h4 style="color:#8b5cf6;margin:0 0 10px 0;font-size:14px;">🏖️ leave_requests</h4>
+        <div style="font-size:12px;color:#ccc;line-height:1.7;">
+          <code style="color:#4A9BD9;">id</code> INT PK AUTO<br>
+          <code style="color:#4A9BD9;">employee_id</code> FK → employees<br>
+          <code style="color:#4A9BD9;">leave_type</code> ENUM(CL,SL,EL,CO,LWP)<br>
+          <code style="color:#4A9BD9;">start_date</code> DATE<br>
+          <code style="color:#4A9BD9;">end_date</code> DATE<br>
+          <code style="color:#4A9BD9;">is_half_day</code> TINYINT(1)<br>
+          <code style="color:#4A9BD9;">reason</code> TEXT<br>
+          <code style="color:#4A9BD9;">status</code> ENUM(pending,approved,rejected)<br>
+          <code style="color:#4A9BD9;">admin_remarks</code> TEXT<br>
+          <code style="color:#4A9BD9;">created_at</code> TIMESTAMP
+        </div>
+      </div>
+
+      <!-- Leave Balances -->
+      <div style="background:#1a2332;border:2px solid #8b5cf6;border-radius:10px;padding:14px;">
+        <h4 style="color:#8b5cf6;margin:0 0 10px 0;font-size:14px;">📊 leave_balances</h4>
+        <div style="font-size:12px;color:#ccc;line-height:1.7;">
+          <code style="color:#4A9BD9;">id</code> INT PK AUTO<br>
+          <code style="color:#4A9BD9;">employee_id</code> FK → employees<br>
+          <code style="color:#4A9BD9;">leave_type</code> ENUM(CL,SL,EL,CO,LWP)<br>
+          <code style="color:#4A9BD9;">year</code> YEAR<br>
+          <code style="color:#4A9BD9;">total_quota</code> INT<br>
+          <code style="color:#4A9BD9;">used</code> INT<br>
+          <code style="color:#4A9BD9;">carried_forward</code> INT
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:#888;">UNIQUE(employee_id, leave_type, year)</div>
+      </div>
+
+      <!-- Salary Slips -->
+      <div style="background:#1a2332;border:2px solid #10b981;border-radius:10px;padding:14px;grid-column:span 2;">
+        <h4 style="color:#10b981;margin:0 0 10px 0;font-size:14px;">💰 salary_slips</h4>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:#ccc;line-height:1.7;">
+          <div>
+            <code style="color:#4A9BD9;">id</code> INT PK AUTO<br>
+            <code style="color:#4A9BD9;">employee_id</code> FK → employees<br>
+            <code style="color:#4A9BD9;">month</code> TINYINT<br>
+            <code style="color:#4A9BD9;">year</code> YEAR<br>
+            <code style="color:#4A9BD9;">total_days</code> INT<br>
+            <code style="color:#4A9BD9;">present_days</code> INT<br>
+            <code style="color:#4A9BD9;">leave_days</code> INT
+          </div>
+          <div>
+            <code style="color:#4A9BD9;">lwp_days</code> INT<br>
+            <code style="color:#4A9BD9;">overtime_hours</code> DECIMAL(5,2)<br>
+            <code style="color:#4A9BD9;">gross_salary</code> DECIMAL(12,2)<br>
+            <code style="color:#4A9BD9;">deductions</code> DECIMAL(12,2)<br>
+            <code style="color:#4A9BD9;">net_salary</code> DECIMAL(12,2)<br>
+            <code style="color:#4A9BD9;">generated_at</code> TIMESTAMP
+          </div>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:#888;">UNIQUE(employee_id, month, year)</div>
+      </div>
+
+      <!-- Notifications -->
+      <div style="background:#1a2332;border:2px solid #6b7280;border-radius:10px;padding:14px;">
+        <h4 style="color:#6b7280;margin:0 0 10px 0;font-size:14px;">🔔 notifications</h4>
+        <div style="font-size:12px;color:#ccc;line-height:1.7;">
+          <code style="color:#4A9BD9;">id</code> INT PK AUTO<br>
+          <code style="color:#4A9BD9;">employee_id</code> FK → employees<br>
+          <code style="color:#4A9BD9;">title</code> VARCHAR(200)<br>
+          <code style="color:#4A9BD9;">body</code> TEXT<br>
+          <code style="color:#4A9BD9;">type</code> ENUM(leave,salary,general)<br>
+          <code style="color:#4A9BD9;">is_read</code> TINYINT(1)<br>
+          <code style="color:#4A9BD9;">created_at</code> TIMESTAMP
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:20px;padding:16px;background:#1a2332;border-radius:10px;border:1px solid #0055A4;">
+  <h4 style="color:#4A9BD9;margin:0 0 8px 0;">Key Design Decisions</h4>
+  <ul style="color:#ccc;font-size:13px;line-height:1.8;margin:0;padding-left:20px;">
+    <li><strong>UTC storage</strong> — all times stored in UTC, converted to IST (UTC+5:30) at display</li>
+    <li><strong>Haversine on server</strong> — geofence check runs server-side using branch lat/lng + radius</li>
+    <li><strong>One attendance record per day</strong> — UNIQUE(employee_id, date) prevents duplicates</li>
+    <li><strong>Leave balances per year</strong> — supports carry-forward from previous year</li>
+    <li><strong>Sensitive data encrypted</strong> — passwords bcrypt hashed, PAN/Aadhar stored with AES encryption</li>
+  </ul>
+</div>

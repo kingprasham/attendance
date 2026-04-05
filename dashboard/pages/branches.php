@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
     if ($action === 'create') {
-        $stmt = $db->prepare("INSERT INTO branches (name, address, latitude, longitude, geofence_radius, late_threshold_hour, late_threshold_minute)
+        $stmt = $db->prepare("INSERT INTO branches (name, address, latitude, longitude, radius_meters, late_threshold_hour, late_threshold_minute)
                               VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([
             trim($_POST['name']),
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     } elseif ($action === 'update') {
         $stmt = $db->prepare("UPDATE branches SET name=?, address=?, latitude=?, longitude=?,
-                              geofence_radius=?, late_threshold_hour=?, late_threshold_minute=?
+                              radius_meters=?, late_threshold_hour=?, late_threshold_minute=?
                               WHERE id=?");
         $stmt->execute([
             trim($_POST['name']),
@@ -94,7 +94,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                 <div class="small text-muted">
                     <i class="bi bi-geo me-1"></i><?= number_format($b['latitude'], 6) ?>, <?= number_format($b['longitude'], 6) ?>
                     &nbsp;·&nbsp;
-                    <i class="bi bi-bullseye me-1"></i><?= $b['geofence_radius'] ?>m radius
+                    <i class="bi bi-bullseye me-1"></i><?= $b['radius_meters'] ?>m radius
                 </div>
                 <div class="small text-muted mt-1">
                     <i class="bi bi-clock me-1"></i>Late after
@@ -166,7 +166,11 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         </div>
                         <div class="col-12">
                             <div id="map" style="height:300px;border-radius:8px;border:1px solid #dee2e6"></div>
-                            <small class="text-muted">Click on the map to set the branch location.</small>
+                            <div id="map-error" class="alert alert-warning py-2 mt-1 d-none">
+                                <i class="bi bi-exclamation-triangle me-1"></i>
+                                Map unavailable — enter latitude &amp; longitude manually above.
+                            </div>
+                            <small class="text-muted" id="map-hint">Click on the map to set the branch location.</small>
                         </div>
                     </div>
                 </div>
@@ -209,7 +213,7 @@ function openBranchModal(branch = null) {
     document.getElementById('branchId').value      = branch?.id ?? '';
     document.getElementById('bName').value         = branch?.name ?? '';
     document.getElementById('bAddress').value      = branch?.address ?? '';
-    document.getElementById('bRadius').value       = branch?.geofence_radius ?? 200;
+    document.getElementById('bRadius').value       = branch?.radius_meters ?? 200;
     document.getElementById('bLateHour').value     = branch?.late_threshold_hour ?? 9;
     document.getElementById('bLateMin').value      = branch?.late_threshold_minute ?? 30;
 
@@ -227,8 +231,15 @@ function openBranchModal(branch = null) {
     }, { once: true });
 }
 </script>
+<script>
+function gm_authFailure() {
+    document.getElementById('map').style.display = 'none';
+    document.getElementById('map-error').classList.remove('d-none');
+    document.getElementById('map-hint').style.display = 'none';
+}
+</script>
 <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBHmCt1bQGIJXTJHkkggsBzIqanAbdkfJk&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDIF_gzxPbuEwA67Pl2r35LjBWze7YrkAo&callback=initMap">
 </script>
 
 <?php require_once __DIR__ . '/../includes/footer.php'; ?>

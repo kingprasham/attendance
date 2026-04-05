@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash \"C:/Users/prash/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.6/skills/brainstorming/scripts/start-server.sh\" --project-dir \"c:/Users/prash/AndroidStudioProjects/attendance\")",
+      "WebSearch",
+      "Bash(git init:*)",
+      "Bash(git config:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(curl -fsSL -o JWT.php \"https://raw.githubusercontent.com/firebase/php-jwt/v6.10.2/src/JWT.php\")",
+      "Bash(curl -fsSL -o Key.php \"https://raw.githubusercontent.com/firebase/php-jwt/v6.10.2/src/Key.php\")",
+      "Bash(curl -fsSL -o SignatureInvalidException.php \"https://raw.githubusercontent.com/firebase/php-jwt/v6.10.2/src/SignatureInvalidException.php\")",
+      "Bash(curl -fsSL -o BeforeValidException.php \"https://raw.githubusercontent.com/firebase/php-jwt/v6.10.2/src/BeforeValidException.php\")",
+      "Bash(curl -fsSL -o ExpiredException.php \"https://raw.githubusercontent.com/firebase/php-jwt/v6.10.2/src/ExpiredException.php\")",
+      "Bash(wc -l \"/c/Users/prash/AndroidStudioProjects/attendance/api/lib/php-jwt\"/*.php)",
+      "Bash(php -l \"/c/Users/prash/AndroidStudioProjects/attendance/api/helpers/jwt_handler.php\")",
+      "Bash(php -l \"/c/Users/prash/AndroidStudioProjects/attendance/api/lib/php-jwt/JWT.php\")",
+      "Bash(git -C /c/Users/prash/AndroidStudioProjects/attendance log --oneline -5)",
+      "Bash(git -C /c/Users/prash/AndroidStudioProjects/attendance/api log --oneline -5)",
+      "WebFetch(domain:mehrgrewal.com)",
+      "Bash(php -r \"echo password_hash\\('admin123', PASSWORD_BCRYPT, ['cost' => 12]\\);\")",
+      "Bash(php -l api/debug.php)",
+      "Bash(grep -A 30 \"CREATE TABLE \\\\`employees\\\\`\" api/sql/schema.sql)"
+    ]
+  }
+}

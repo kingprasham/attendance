@@ -1,0 +1,160 @@
+<h2>REST API Endpoints — Kalina Engineering Attendance</h2>
+<p class="subtitle">Section 3 of 5 — PHP API structure hosted on GoDaddy</p>
+
+<div class="mockup">
+  <div class="mockup-header">API Directory Structure</div>
+  <div class="mockup-body" style="padding:24px;background:#0d1117;font-family:monospace;font-size:13px;color:#ccc;line-height:1.8;">
+    <pre style="margin:0;color:#ccc;">
+api/
+├── config/
+│   ├── database.php          <span style="color:#6b7280;"># MySQL PDO connection</span>
+│   ├── constants.php         <span style="color:#6b7280;"># JWT secret, geofence defaults, timezone</span>
+│   └── cors.php              <span style="color:#6b7280;"># CORS headers for Flutter app</span>
+├── middleware/
+│   ├── auth.php              <span style="color:#6b7280;"># JWT token verification</span>
+│   ├── admin_auth.php        <span style="color:#6b7280;"># Admin-only access check</span>
+│   └── rate_limit.php        <span style="color:#6b7280;"># DB-based rate limiting</span>
+├── helpers/
+│   ├── response.php          <span style="color:#6b7280;"># JSON response formatter</span>
+│   ├── validator.php         <span style="color:#6b7280;"># Input validation</span>
+│   ├── geofence.php          <span style="color:#6b7280;"># Haversine distance calculation</span>
+│   ├── jwt_handler.php       <span style="color:#6b7280;"># JWT encode/decode (firebase/php-jwt)</span>
+│   └── encryption.php        <span style="color:#6b7280;"># AES encrypt/decrypt for PAN, Aadhar</span>
+├── endpoints/
+│   ├── auth/
+│   │   ├── login.php         <span style="color:#6b7280;"># POST — employee login</span>
+│   │   ├── admin_login.php   <span style="color:#6b7280;"># POST — admin login</span>
+│   │   ├── refresh.php       <span style="color:#6b7280;"># POST — refresh JWT token</span>
+│   │   └── register_device.php <span style="color:#6b7280;"># POST — bind device on first login</span>
+│   ├── branches/
+│   │   ├── create.php        <span style="color:#6b7280;"># POST — create branch (admin)</span>
+│   │   ├── list.php          <span style="color:#6b7280;"># GET — list all branches (admin)</span>
+│   │   ├── update.php        <span style="color:#6b7280;"># PUT — update branch (admin)</span>
+│   │   └── delete.php        <span style="color:#6b7280;"># DELETE — deactivate branch (admin)</span>
+│   ├── employees/
+│   │   ├── create.php        <span style="color:#6b7280;"># POST — create employee (admin)</span>
+│   │   ├── list.php          <span style="color:#6b7280;"># GET — list employees (admin)</span>
+│   │   ├── view.php          <span style="color:#6b7280;"># GET — single employee details</span>
+│   │   ├── update.php        <span style="color:#6b7280;"># PUT — update employee (admin)</span>
+│   │   ├── delete.php        <span style="color:#6b7280;"># DELETE — deactivate employee (admin)</span>
+│   │   ├── reset_device.php  <span style="color:#6b7280;"># POST — unbind device (admin)</span>
+│   │   └── profile.php       <span style="color:#6b7280;"># GET — employee's own profile</span>
+│   ├── attendance/
+│   │   ├── clock_in.php      <span style="color:#6b7280;"># POST — mark clock in</span>
+│   │   ├── clock_out.php     <span style="color:#6b7280;"># POST — mark clock out</span>
+│   │   ├── today.php         <span style="color:#6b7280;"># GET — today's status</span>
+│   │   ├── history.php       <span style="color:#6b7280;"># GET — monthly attendance</span>
+│   │   └── report.php        <span style="color:#6b7280;"># GET — daily report (admin)</span>
+│   ├── leaves/
+│   │   ├── apply.php         <span style="color:#6b7280;"># POST — apply for leave</span>
+│   │   ├── cancel.php        <span style="color:#6b7280;"># POST — cancel pending leave</span>
+│   │   ├── balance.php       <span style="color:#6b7280;"># GET — leave balances</span>
+│   │   ├── history.php       <span style="color:#6b7280;"># GET — leave history</span>
+│   │   ├── pending.php       <span style="color:#6b7280;"># GET — pending requests (admin)</span>
+│   │   ├── approve.php       <span style="color:#6b7280;"># POST — approve leave (admin)</span>
+│   │   └── reject.php        <span style="color:#6b7280;"># POST — reject leave (admin)</span>
+│   ├── salary/
+│   │   ├── generate.php      <span style="color:#6b7280;"># POST — generate monthly payroll (admin)</span>
+│   │   ├── slips.php         <span style="color:#6b7280;"># GET — employee salary slips</span>
+│   │   └── slip_detail.php   <span style="color:#6b7280;"># GET — single slip breakdown</span>
+│   ├── holidays/
+│   │   ├── create.php        <span style="color:#6b7280;"># POST — add holiday (admin)</span>
+│   │   ├── list.php          <span style="color:#6b7280;"># GET — holiday calendar</span>
+│   │   └── delete.php        <span style="color:#6b7280;"># DELETE — remove holiday (admin)</span>
+│   ├── notifications/
+│   │   ├── list.php          <span style="color:#6b7280;"># GET — employee notifications</span>
+│   │   └── mark_read.php     <span style="color:#6b7280;"># POST — mark as read</span>
+│   └── leave_policies/
+│       ├── set.php           <span style="color:#6b7280;"># POST — set branch leave policy (admin)</span>
+│       └── view.php          <span style="color:#6b7280;"># GET — view branch leave policy</span>
+├── .htaccess                 <span style="color:#6b7280;"># URL rewriting + auth header pass-through</span>
+└── index.php                 <span style="color:#6b7280;"># Simple router (maps URL → endpoint file)</span>
+    </pre>
+  </div>
+</div>
+
+<!-- Key API Details -->
+<div style="margin-top:24px;">
+  <h3>Critical Endpoint Details</h3>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+
+    <div style="background:#1a1a2e;border:1px solid #ef4444;border-radius:10px;padding:16px;">
+      <h4 style="color:#ef4444;margin-top:0;">POST /attendance/clock_in</h4>
+      <div style="font-size:12px;color:#ccc;line-height:1.8;">
+        <strong style="color:#4A9BD9;">Request:</strong><br>
+        <code style="font-size:11px;">{ latitude, longitude, device_id }</code><br>
+        <code style="font-size:11px;">Header: Authorization: Bearer &lt;jwt&gt;</code><br><br>
+        <strong style="color:#4A9BD9;">Server Validates:</strong><br>
+        1. JWT token valid → extract employee_id<br>
+        2. device_id matches bound device<br>
+        3. No existing clock_in today<br>
+        4. Haversine(employee_lat/lng, branch_lat/lng) &le; radius<br>
+        5. Check for fake GPS flag from client<br><br>
+        <strong style="color:#4A9BD9;">Response:</strong><br>
+        <code style="font-size:11px;">{ success: true, clock_in_time: "09:05 IST" }</code><br>
+        <code style="font-size:11px;">{ success: false, error: "Not in office premises" }</code>
+      </div>
+    </div>
+
+    <div style="background:#1a1a2e;border:1px solid #10b981;border-radius:10px;padding:16px;">
+      <h4 style="color:#10b981;margin-top:0;">POST /auth/login</h4>
+      <div style="font-size:12px;color:#ccc;line-height:1.8;">
+        <strong style="color:#4A9BD9;">Request:</strong><br>
+        <code style="font-size:11px;">{ username, password, device_id }</code><br><br>
+        <strong style="color:#4A9BD9;">First Login (no bound device):</strong><br>
+        1. Verify credentials<br>
+        2. Bind device_id to employee<br>
+        3. Return JWT access + refresh tokens<br>
+        4. Enable biometric prompt on client<br><br>
+        <strong style="color:#4A9BD9;">Subsequent Logins:</strong><br>
+        1. Biometric verified on client<br>
+        2. Send stored credentials + device_id<br>
+        3. Server checks device match<br>
+        4. Return fresh JWT tokens<br><br>
+        <strong style="color:#ef4444;">Wrong device? → "Device not registered"</strong>
+      </div>
+    </div>
+
+    <div style="background:#1a1a2e;border:1px solid #8b5cf6;border-radius:10px;padding:16px;">
+      <h4 style="color:#8b5cf6;margin-top:0;">POST /salary/generate</h4>
+      <div style="font-size:12px;color:#ccc;line-height:1.8;">
+        <strong style="color:#4A9BD9;">Request (admin only):</strong><br>
+        <code style="font-size:11px;">{ branch_id, month, year }</code><br><br>
+        <strong style="color:#4A9BD9;">Calculation Logic:</strong><br>
+        1. Get all active employees in branch<br>
+        2. For each employee:<br>
+        &nbsp;&nbsp;• Count present days from attendance_logs<br>
+        &nbsp;&nbsp;• Count approved leave days<br>
+        &nbsp;&nbsp;• Count LWP (unpaid) days<br>
+        &nbsp;&nbsp;• per_day = monthly_salary / total_working_days<br>
+        &nbsp;&nbsp;• net = per_day × (present + paid_leave) days<br>
+        3. Generate salary_slips records<br>
+        4. Push notification to employees
+      </div>
+    </div>
+
+    <div style="background:#1a1a2e;border:1px solid #f59e0b;border-radius:10px;padding:16px;">
+      <h4 style="color:#f59e0b;margin-top:0;">Authentication &amp; Security</h4>
+      <div style="font-size:12px;color:#ccc;line-height:1.8;">
+        <strong style="color:#4A9BD9;">JWT Strategy:</strong><br>
+        • Access token: 30 min expiry<br>
+        • Refresh token: 30 days expiry<br>
+        • Refresh rotation (new refresh each use)<br><br>
+        <strong style="color:#4A9BD9;">Rate Limiting:</strong><br>
+        • Login: 5 attempts / 15 min<br>
+        • Attendance: 10 requests / min<br>
+        • General API: 100 requests / min<br><br>
+        <strong style="color:#4A9BD9;">Data Security:</strong><br>
+        • Passwords: bcrypt hash<br>
+        • PAN/Aadhar: AES-256 encrypted<br>
+        • All inputs: sanitized + validated<br>
+        • PDO prepared statements (no SQL injection)
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:20px;padding:14px;background:#1a2332;border-radius:10px;border:1px solid #0055A4;font-size:13px;color:#8bb8e8;">
+  <strong style="color:#4A9BD9;">Total: ~30 endpoints</strong> — 8 auth/device, 4 branches, 7 employees, 5 attendance, 7 leaves, 3 salary, 3 holidays, 2 notifications, 2 leave policies. All behind JWT auth. Admin endpoints require admin token.
+</div>

@@ -61,12 +61,19 @@ class ApiClient {
   }
 
   Map<String, dynamic> _handleResponse(Response response) {
-    final data = response.data as Map<String, dynamic>;
-    if (data['success'] == true) {
-      return data;
+    final raw = response.data;
+    if (raw is! Map<String, dynamic>) {
+      final body = raw?.toString() ?? '';
+      throw ApiException(
+        'Server returned unexpected response: ${body.length > 200 ? body.substring(0, 200) : body}',
+        statusCode: response.statusCode,
+      );
+    }
+    if (raw['success'] == true) {
+      return raw;
     }
     throw ApiException(
-      data['message'] ?? 'An error occurred',
+      raw['message'] ?? 'An error occurred',
       statusCode: response.statusCode,
     );
   }
@@ -74,7 +81,13 @@ class ApiClient {
   ApiException _handleDioError(DioException e) {
     if (e.response != null) {
       final data = e.response?.data;
-      final message = (data is Map) ? (data['message'] ?? 'Request failed') : 'Request failed';
+      final String message;
+      if (data is Map) {
+        message = data['message'] ?? 'Request failed';
+      } else {
+        final body = data?.toString() ?? '';
+        message = 'Server error (${e.response?.statusCode}): ${body.length > 200 ? body.substring(0, 200) : body}';
+      }
       if (e.response?.statusCode == 401) {
         return UnauthorizedException(message);
       }

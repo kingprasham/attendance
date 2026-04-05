@@ -59,7 +59,7 @@ $stmt3->execute([
     ':department' => sanitize_string($input['department'] ?? ''),
     ':branch_id' => (int)$input['branch_id'],
     ':doj' => $input['date_of_joining'],
-    ':emp_type' => $input['employment_type'] ?? 'full',
+    ':emp_type' => $input['employment_type'] ?? 'full_time',
     ':salary' => $input['monthly_salary'],
     ':bank' => sanitize_string($input['bank_account'] ?? ''),
     ':ifsc' => sanitize_string($input['ifsc_code'] ?? ''),

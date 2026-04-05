@@ -25,7 +25,7 @@ if (!$leave) {
 
 // Update status
 $stmt2 = $pdo->prepare(
-    "UPDATE leave_requests SET status = 'rejected', admin_remarks = :remarks WHERE id = :id"
+    "UPDATE leave_requests SET status = 'rejected', admin_remarks = :remarks, reviewed_at = NOW() WHERE id = :id"
 );
 $stmt2->execute([
     ':id' => $leave['id'],

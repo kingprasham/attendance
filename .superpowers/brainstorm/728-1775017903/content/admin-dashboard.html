@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Kalina Engineering</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',sans-serif; background:#f0f2f5; color:#1a1a2e; padding:40px 20px; }
+  h1 { text-align:center; font-size:28px; font-weight:800; color:#0055A4; margin-bottom:6px; }
+  .page-subtitle { text-align:center; color:#6b7280; font-size:14px; margin-bottom:40px; }
+  .section-title { font-size:18px; font-weight:700; color:#0055A4; margin:40px 0 20px; padding-bottom:8px; border-bottom:2px solid #e5e7eb; }
+
+  .dashboard-frame {
+    background:white;
+    border-radius:16px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.08);
+    overflow:hidden;
+    border:1px solid #e5e7eb;
+    margin-bottom:30px;
+  }
+
+  /* Browser chrome */
+  .browser-bar {
+    background:#f3f4f6;
+    padding:10px 16px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    border-bottom:1px solid #e5e7eb;
+  }
+  .browser-dots { display:flex; gap:6px; }
+  .browser-dots span { width:10px; height:10px; border-radius:50%; }
+  .browser-dots .red { background:#ef4444; }
+  .browser-dots .yellow { background:#f59e0b; }
+  .browser-dots .green { background:#22c55e; }
+  .browser-url {
+    flex:1; background:white; border:1px solid #e5e7eb; border-radius:6px;
+    padding:5px 12px; font-size:11px; color:#6b7280;
+  }
+
+  /* Dashboard Layout */
+  .dash-layout { display:flex; min-height:500px; }
+
+  /* Sidebar */
+  .sidebar {
+    width:220px;
+    background:#0055A4;
+    padding:0;
+    flex-shrink:0;
+  }
+  .sidebar-logo {
+    padding:20px;
+    text-align:center;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+  }
+  .sidebar-logo-text { color:white; font-size:15px; font-weight:800; letter-spacing:0.5px; }
+  .sidebar-logo-sub { color:rgba(255,255,255,0.5); font-size:9px; letter-spacing:1.5px; }
+  .sidebar-section { padding:16px 0 8px 20px; font-size:9px; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:1px; font-weight:600; }
+  .sidebar-item {
+    padding:10px 20px;
+    font-size:12px;
+    color:rgba(255,255,255,0.7);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+    transition:all 0.2s;
+  }
+  .sidebar-item:hover { background:rgba(255,255,255,0.1); color:white; }
+  .sidebar-item.active { background:rgba(255,255,255,0.15); color:white; font-weight:600; border-left:3px solid white; }
+  .sidebar-icon { font-size:14px; width:20px; text-align:center; }
+
+  /* Main content */
+  .dash-main { flex:1; background:#f8f9fb; }
+  .dash-header {
+    background:white;
+    padding:16px 24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid #e5e7eb;
+  }
+  .dash-header h2 { font-size:18px; font-weight:700; color:#1f2937; }
+  .dash-header-actions { display:flex; gap:10px; }
+  .dash-btn {
+    padding:8px 16px;
+    border-radius:8px;
+    font-size:12px;
+    font-weight:600;
+    border:none;
+    cursor:pointer;
+  }
+  .dash-btn-primary { background:#0055A4; color:white; }
+  .dash-btn-outline { background:white; color:#374151; border:1px solid #d1d5db; }
+
+  .dash-content { padding:24px; }
+
+  /* Stats cards */
+  .dash-stats {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+    margin-bottom:24px;
+  }
+  .dash-stat {
+    background:white;
+    border-radius:12px;
+    padding:18px;
+    border:1px solid #f0f0f0;
+    box-shadow:0 1px 3px rgba(0,0,0,0.04);
+  }
+  .dash-stat-label { font-size:11px; color:#6b7280; font-weight:500; }
+  .dash-stat-value { font-size:28px; font-weight:800; letter-spacing:-1px; margin:4px 0; }
+  .dash-stat-change { font-size:10px; font-weight:600; }
+  .dash-stat-up { color:#059669; }
+  .dash-stat-down { color:#dc2626; }
+
+  /* Table */
+  .dash-table-wrapper {
+    background:white;
+    border-radius:12px;
+    border:1px solid #f0f0f0;
+    overflow:hidden;
+    box-shadow:0 1px 3px rgba(0,0,0,0.04);
+  }
+  .dash-table-header {
+    padding:16px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-bottom:1px solid #f3f4f6;
+  }
+  .dash-table-title { font-size:14px; font-weight:700; color:#1f2937; }
+  table { width:100%; border-collapse:collapse; }
+  th {
+    padding:10px 16px;
+    text-align:left;
+    font-size:10px;
+    font-weight:700;
+    color:#6b7280;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    background:#fafbfc;
+    border-bottom:1px solid #f3f4f6;
+  }
+  td {
+    padding:12px 16px;
+    font-size:12px;
+    color:#374151;
+    border-bottom:1px solid #f9fafb;
+  }
+  .badge { font-size:10px; font-weight:600; padding:3px 10px; border-radius:20px; display:inline-block; }
+  .badge-green { background:#ecfdf5; color:#059669; }
+  .badge-yellow { background:#fffbeb; color:#d97706; }
+  .badge-red { background:#fef2f2; color:#dc2626; }
+  .badge-blue { background:#eff6ff; color:#2563eb; }
+  .avatar {
+    width:30px; height:30px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center;
+    font-size:11px; font-weight:700; color:white; margin-right:8px; vertical-align:middle;
+  }
+
+  /* Pages overview */
+  .pages-grid {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+    margin:20px 0;
+  }
+  .page-card {
+    background:white;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:20px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.04);
+  }
+  .page-card h4 { font-size:14px; font-weight:700; color:#0055A4; margin-bottom:8px; }
+  .page-card p { font-size:12px; color:#6b7280; line-height:1.6; }
+  .page-card ul { font-size:11px; color:#374151; padding-left:16px; margin-top:8px; line-height:1.8; }
+
+  .tech-box {
+    background:white;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:20px 24px;
+    margin-top:20px;
+  }
+  .tech-box h4 { font-size:14px; font-weight:700; color:#0055A4; margin-bottom:12px; }
+  .tech-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+  .tech-item { font-size:12px; color:#374151; display:flex; align-items:center; gap:8px; }
+  .tech-dot { width:8px; height:8px; border-radius:50%; background:#4A9BD9; flex-shrink:0; }
+</style>
+</head>
+<body>
+
+<h1>Admin Dashboard — Kalina Engineering</h1>
+<p class="page-subtitle">Section 5 of 5 — Web dashboard for superadmin (PHP + HTML/CSS/JS)</p>
+
+<!-- Dashboard Mockup -->
+<div class="section-title">Dashboard Home — Daily Report</div>
+<div class="dashboard-frame">
+  <div class="browser-bar">
+    <div class="browser-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+    <div class="browser-url">https://admin.kalinaengineering.com/dashboard</div>
+  </div>
+  <div class="dash-layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <div style="width:40px;height:40px;background:white;border-radius:10px;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;">
+          <span style="color:#0055A4;font-size:18px;font-weight:900;">K</span>
+        </div>
+        <div class="sidebar-logo-text">KALINA</div>
+        <div class="sidebar-logo-sub">ENGINEERING PVT. LTD.</div>
+      </div>
+      <div class="sidebar-section">Overview</div>
+      <div class="sidebar-item active"><span class="sidebar-icon">&#128200;</span> Dashboard</div>
+      <div class="sidebar-section">Manage</div>
+      <div class="sidebar-item"><span class="sidebar-icon">&#127981;</span> Branches</div>
+      <div class="sidebar-item"><span class="sidebar-icon">&#128101;</span> Employees</div>
+      <div class="sidebar-section">Attendance</div>
+      <div class="sidebar-item"><span class="sidebar-icon">&#9201;</span> Daily Report</div>
+      <div class="sidebar-item"><span class="sidebar-icon">&#128197;</span> Monthly Report</div>
+      <div class="sidebar-section">HR</div>
+      <div class="sidebar-item"><span class="sidebar-icon">&#9992;&#65039;</span> Leave Requests</div>
+      <div class="sidebar-item"><span class="sidebar-icon">&#128198;</span> Leave Policies</div>
+      <div class="sidebar-item"><span class="sidebar-icon">&#128197;</span> Holidays</div>
+      <div class="sidebar-section">Payroll</div>
+      <div class="sidebar-item"><span class="sidebar-icon">&#128176;</span> Generate Salary</div>
+      <div class="sidebar-item"><span class="sidebar-icon">&#128196;</span> Salary Reports</div>
+      <div class="sidebar-section">Settings</div>
+      <div class="sidebar-item"><span class="sidebar-icon">&#9881;&#65039;</span> Account</div>
+    </div>
+
+    <!-- Main -->
+    <div class="dash-main">
+      <div class="dash-header">
+        <h2>Daily Attendance Report</h2>
+        <div class="dash-header-actions">
+          <div class="dash-btn dash-btn-outline">&#128197; 1 Apr 2026</div>
+          <div class="dash-btn dash-btn-outline">All Branches &#9660;</div>
+          <div class="dash-btn dash-btn-primary">&#128196; Export PDF</div>
+        </div>
+      </div>
+      <div class="dash-content">
+        <!-- Stats -->
+        <div class="dash-stats">
+          <div class="dash-stat">
+            <div class="dash-stat-label">Total Employees</div>
+            <div class="dash-stat-value" style="color:#1f2937;">156</div>
+            <div class="dash-stat-change dash-stat-up">Across 4 branches</div>
+          </div>
+          <div class="dash-stat">
+            <div class="dash-stat-label">Present Today</div>
+            <div class="dash-stat-value" style="color:#059669;">142</div>
+            <div class="dash-stat-change dash-stat-up">&#8593; 91% attendance</div>
+          </div>
+          <div class="dash-stat">
+            <div class="dash-stat-label">On Leave</div>
+            <div class="dash-stat-value" style="color:#d97706;">8</div>
+            <div class="dash-stat-change" style="color:#6b7280;">5 CL &middot; 2 SL &middot; 1 EL</div>
+          </div>
+          <div class="dash-stat">
+            <div class="dash-stat-label">Absent</div>
+            <div class="dash-stat-value" style="color:#dc2626;">6</div>
+            <div class="dash-stat-change dash-stat-down">&#8595; No leave applied</div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="dash-table-wrapper">
+          <div class="dash-table-header">
+            <div class="dash-table-title">Employee Attendance — 1 April 2026</div>
+            <div class="dash-btn dash-btn-outline" style="font-size:11px;">&#128269; Search employees</div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>Branch</th>
+                <th>Clock In</th>
+                <th>Clock Out</th>
+                <th>Hours</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="avatar" style="background:linear-gradient(135deg,#0055A4,#4A9BD9);">RK</span>Rajesh Kumar</td>
+                <td>Borivali</td>
+                <td style="font-weight:600;">09:05 AM</td>
+                <td style="font-weight:600;">06:30 PM</td>
+                <td style="font-weight:600;">9h 25m</td>
+                <td><span class="badge badge-green">Present</span></td>
+              </tr>
+              <tr>
+                <td><span class="avatar" style="background:linear-gradient(135deg,#059669,#34d399);">PS</span>Priya Sharma</td>
+                <td>Borivali</td>
+                <td style="font-weight:600;">09:00 AM</td>
+                <td style="font-weight:600;">06:15 PM</td>
+                <td style="font-weight:600;">9h 15m</td>
+                <td><span class="badge badge-green">Present</span></td>
+              </tr>
+              <tr>
+                <td><span class="avatar" style="background:linear-gradient(135deg,#d97706,#fbbf24);">AM</span>Amit Mehta</td>
+                <td>Andheri</td>
+                <td style="font-weight:600;">10:15 AM</td>
+                <td style="color:#9ca3af;">—</td>
+                <td style="color:#9ca3af;">—</td>
+                <td><span class="badge badge-yellow">Late</span></td>
+              </tr>
+              <tr>
+                <td><span class="avatar" style="background:linear-gradient(135deg,#8b5cf6,#a78bfa);">SV</span>Sneha Verma</td>
+                <td>Thane</td>
+                <td colspan="3" style="color:#9ca3af;text-align:center;">Casual Leave — Family function</td>
+                <td><span class="badge badge-blue">On Leave</span></td>
+              </tr>
+              <tr>
+                <td><span class="avatar" style="background:linear-gradient(135deg,#dc2626,#f87171);">VP</span>Vikram Patel</td>
+                <td>Borivali</td>
+                <td colspan="3" style="color:#dc2626;text-align:center;font-size:11px;">No clock-in recorded &middot; No leave applied</td>
+                <td><span class="badge badge-red">Absent</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Dashboard Pages Overview -->
+<div class="section-title">All Dashboard Pages</div>
+<div class="pages-grid">
+  <div class="page-card">
+    <h4>&#128200; Dashboard Home</h4>
+    <p>Daily overview with key metrics</p>
+    <ul>
+      <li>Today's attendance summary</li>
+      <li>Branch-wise breakdown</li>
+      <li>Pending leave requests count</li>
+      <li>Recent activity feed</li>
+    </ul>
+  </div>
+  <div class="page-card">
+    <h4>&#127981; Branch Management</h4>
+    <p>Create and configure branches</p>
+    <ul>
+      <li>Add branch with Google Maps pin</li>
+      <li>Set geofence radius (meters)</li>
+      <li>View employee count per branch</li>
+      <li>Activate / deactivate branches</li>
+    </ul>
+  </div>
+  <div class="page-card">
+    <h4>&#128101; Employee Management</h4>
+    <p>Full employee CRUD</p>
+    <ul>
+      <li>Create with all details + salary</li>
+      <li>Assign username + password</li>
+      <li>Assign to branch</li>
+      <li>Reset device binding</li>
+      <li>Activate / deactivate</li>
+    </ul>
+  </div>
+  <div class="page-card">
+    <h4>&#9201; Daily Attendance Report</h4>
+    <p>Real-time daily tracking</p>
+    <ul>
+      <li>Filter by date + branch</li>
+      <li>Present / absent / late / leave status</li>
+      <li>Clock in/out times + hours worked</li>
+      <li>Export as PDF / Excel</li>
+    </ul>
+  </div>
+  <div class="page-card">
+    <h4>&#9992;&#65039; Leave Requests</h4>
+    <p>Approve or reject leave applications</p>
+    <ul>
+      <li>Pending requests queue</li>
+      <li>View employee balance before approving</li>
+      <li>Add admin remarks</li>
+      <li>Push notification on action</li>
+    </ul>
+  </div>
+  <div class="page-card">
+    <h4>&#128176; Payroll Generation</h4>
+    <p>Monthly salary processing</p>
+    <ul>
+      <li>Select branch + month</li>
+      <li>Auto-calculate from attendance</li>
+      <li>Review before generating</li>
+      <li>Generate salary slips</li>
+      <li>Notify employees</li>
+    </ul>
+  </div>
+  <div class="page-card">
+    <h4>&#128198; Leave Policies</h4>
+    <p>Configure per-branch leave rules</p>
+    <ul>
+      <li>Set annual quota per leave type</li>
+      <li>Enable/disable carry-forward</li>
+      <li>Max carry-forward days</li>
+      <li>Copy policy across branches</li>
+    </ul>
+  </div>
+  <div class="page-card">
+    <h4>&#128197; Holiday Calendar</h4>
+    <p>Manage company holidays</p>
+    <ul>
+      <li>Add/remove holidays per branch</li>
+      <li>Mark as optional or mandatory</li>
+      <li>Calendar year view</li>
+    </ul>
+  </div>
+  <div class="page-card">
+    <h4>&#9881;&#65039; Admin Settings</h4>
+    <p>Account and system config</p>
+    <ul>
+      <li>Change password</li>
+      <li>API base URL config</li>
+      <li>Working hours definition</li>
+      <li>Late threshold (e.g., after 9:30 AM)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Tech Stack -->
+<div class="tech-box">
+  <h4>Dashboard Tech Stack</h4>
+  <div class="tech-grid">
+    <div class="tech-item"><div class="tech-dot"></div>HTML5 + CSS3 (responsive)</div>
+    <div class="tech-item"><div class="tech-dot"></div>Vanilla JavaScript (ES6+)</div>
+    <div class="tech-item"><div class="tech-dot"></div>Bootstrap 5 (UI framework)</div>
+    <div class="tech-item"><div class="tech-dot"></div>Chart.js (attendance graphs)</div>
+    <div class="tech-item"><div class="tech-dot"></div>DataTables (sortable tables)</div>
+    <div class="tech-item"><div class="tech-dot"></div>Google Maps JS API (branch pin)</div>
+    <div class="tech-item"><div class="tech-dot"></div>PHP sessions (admin auth)</div>
+    <div class="tech-item"><div class="tech-dot"></div>FPDF / DomPDF (PDF export)</div>
+  </div>
+</div>
+
+</body>
+</html>

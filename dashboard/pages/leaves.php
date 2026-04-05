@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $newStatus = $action === 'approve' ? 'approved' : 'rejected';
         $db->beginTransaction();
         try {
-            $leave = $db->prepare("SELECT * FROM leave_requests WHERE id = ? AND status = 'pending'")->execute([$leaveId]);
             $leave = $db->prepare("SELECT * FROM leave_requests WHERE id = ? AND status = 'pending'");
             $leave->execute([$leaveId]);
             $leaveRow = $leave->fetch();
@@ -29,11 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                    ->execute([$newStatus, $leaveId]);
 
                 if ($newStatus === 'approved') {
-                    // Increment used balance
+                    // Increment used balance for the year the leave falls in
                     $days = (strtotime($leaveRow['end_date']) - strtotime($leaveRow['start_date'])) / 86400 + 1;
                     if ($leaveRow['is_half_day']) $days = 0.5;
-                    $db->prepare("UPDATE leave_balances SET used = used + ? WHERE employee_id = ? AND leave_type = ?")
-                       ->execute([$days, $leaveRow['employee_id'], $leaveRow['leave_type']]);
+                    $leaveYear = (int)date('Y', strtotime($leaveRow['start_date']));
+                    $db->prepare("UPDATE leave_balances SET used = used + ? WHERE employee_id = ? AND leave_type = ? AND year = ?")
+                       ->execute([$days, $leaveRow['employee_id'], $leaveRow['leave_type'], $leaveYear]);
                 }
 
                 // Notify employee

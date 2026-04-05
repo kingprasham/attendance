@@ -21,11 +21,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $num  = $last ? ((int)substr($last, strlen('KE-')) + 1) : 1;
         $code = 'KE-' . str_pad($num, 3, '0', STR_PAD_LEFT);
 
+        // username = lowercase email prefix (before @), suffixed with code if taken
+        $baseUsername = strtolower(preg_replace('/[^a-z0-9]/', '', explode('@', trim($_POST['email']))[0]));
+        $username = $baseUsername;
+        $uCheck = $db->prepare("SELECT id FROM employees WHERE username = ?");
+        $uCheck->execute([$username]);
+        if ($uCheck->fetchColumn()) {
+            $username = $baseUsername . strtolower(str_replace('-', '', $code));
+        }
         $stmt = $db->prepare("INSERT INTO employees
             (employee_code, full_name, email, phone, branch_id, designation, department,
              employment_type, date_of_joining, monthly_salary, bank_account, ifsc_code,
-             pan_number, aadhar_number, password_hash)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+             pan_number, aadhar_number, username, password)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
         $stmt->execute([
             $code,
             trim($_POST['full_name']),
@@ -41,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             trim($_POST['ifsc_code']),
             $_POST['pan_number'] ? aes_encrypt(trim($_POST['pan_number'])) : null,
             $_POST['aadhar_number'] ? aes_encrypt(trim($_POST['aadhar_number'])) : null,
+            $username,
             password_hash($_POST['password'], PASSWORD_BCRYPT, ['cost' => 12]),
         ]);
 
@@ -48,9 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $empId = $db->lastInsertId();
         $policies = $db->prepare("SELECT * FROM leave_policies WHERE branch_id = ?");
         $policies->execute([(int)$_POST['branch_id']]);
-        $ins = $db->prepare("INSERT INTO leave_balances (employee_id, leave_type, total_quota, used, carried_forward) VALUES (?,?,?,0,0)");
+        $ins = $db->prepare("INSERT INTO leave_balances (employee_id, leave_type, year, total_quota, used, carried_forward) VALUES (?,?,?,?,0,0)");
+        $currentYear = (int)date('Y');
         foreach ($policies->fetchAll() as $p) {
-            $ins->execute([$empId, $p['leave_type'], $p['annual_quota']]);
+            $ins->execute([$empId, $p['leave_type'], $currentYear, $p['annual_quota']]);
         }
         $msg = "Employee {$code} created successfully.";
 
@@ -80,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $vals[]  = aes_encrypt(trim($_POST['aadhar_number']));
         }
         if (!empty($_POST['password'])) {
-            $fields .= ', password_hash=?';
+            $fields .= ', password=?';
             $vals[]  = password_hash($_POST['password'], PASSWORD_BCRYPT, ['cost' => 12]);
         }
         $vals[] = (int)$_POST['emp_id'];
@@ -195,6 +205,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         </td>
                         <td>
                             <button class="btn btn-outline-primary btn-sm"
+                                    data-bs-toggle="modal" data-bs-target="#empModal"
                                     onclick="openEmpModal(<?= htmlspecialchars(json_encode($e)) ?>)">
                                 <i class="bi bi-pencil"></i>
                             </button>
@@ -278,6 +289,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                 <option value="part_time">Part Time</option>
                                 <option value="contract">Contract</option>
                             </select>
+                            <!-- Values match DB ENUM('full_time','part_time','contract') -->
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Date of Joining</label>
@@ -288,8 +300,17 @@ require_once __DIR__ . '/../includes/sidebar.php';
                             <input type="number" name="monthly_salary" id="eSalary" class="form-control" min="0">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold">Password <span id="pwdHint" class="text-muted small">(required for new)</span></label>
-                            <input type="password" name="password" id="ePwd" class="form-control">
+                            <label class="form-label fw-semibold">
+                                Password
+                                <span id="pwdHint" class="text-muted small ms-1">(required for new)</span>
+                            </label>
+                            <input type="password" name="password" id="ePwd" class="form-control"
+                                   placeholder="Enter new password">
+                            <div id="pwdExisting" class="d-none mt-1">
+                                <span class="badge bg-success-subtle text-success">
+                                    <i class="bi bi-check-circle me-1"></i>Password is set — leave blank to keep it
+                                </span>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Bank Account</label>
@@ -301,11 +322,23 @@ require_once __DIR__ . '/../includes/sidebar.php';
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">PAN Number</label>
-                            <input type="text" name="pan_number" id="ePan" class="form-control" placeholder="Leave blank to keep existing">
+                            <input type="text" name="pan_number" id="ePan" class="form-control"
+                                   placeholder="Enter PAN to update">
+                            <div id="panExisting" class="d-none mt-1">
+                                <span class="badge bg-success-subtle text-success">
+                                    <i class="bi bi-check-circle me-1"></i>PAN on file — leave blank to keep it
+                                </span>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold">Aadhar Number</label>
-                            <input type="text" name="aadhar_number" id="eAadhar" class="form-control" placeholder="Leave blank to keep existing">
+                            <input type="text" name="aadhar_number" id="eAadhar" class="form-control"
+                                   placeholder="Enter Aadhar to update">
+                            <div id="aadharExisting" class="d-none mt-1">
+                                <span class="badge bg-success-subtle text-success">
+                                    <i class="bi bi-check-circle me-1"></i>Aadhar on file — leave blank to keep it
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -320,8 +353,9 @@ require_once __DIR__ . '/../includes/sidebar.php';
 
 <script>
 function openEmpModal(emp = null) {
-    document.getElementById('empModalTitle').textContent = emp ? 'Edit Employee' : 'Add Employee';
-    document.getElementById('empAction').value = emp ? 'update' : 'create';
+    const isEdit = emp !== null;
+    document.getElementById('empModalTitle').textContent = isEdit ? 'Edit Employee' : 'Add Employee';
+    document.getElementById('empAction').value = isEdit ? 'update' : 'create';
     document.getElementById('empId').value     = emp?.id ?? '';
     document.getElementById('eName').value     = emp?.full_name ?? '';
     document.getElementById('eEmail').value    = emp?.email ?? '';
@@ -337,7 +371,14 @@ function openEmpModal(emp = null) {
     document.getElementById('ePan').value      = '';
     document.getElementById('eAadhar').value   = '';
     document.getElementById('ePwd').value      = '';
-    document.getElementById('pwdHint').textContent = emp ? '(leave blank to keep)' : '(required)';
+
+    // Password hint
+    document.getElementById('pwdHint').textContent = isEdit ? '' : '(required)';
+    document.getElementById('pwdExisting').classList.toggle('d-none', !isEdit);
+
+    // PAN / Aadhar — show badge if the employee already has a value stored
+    document.getElementById('panExisting').classList.toggle('d-none', !(isEdit && emp?.pan_number));
+    document.getElementById('aadharExisting').classList.toggle('d-none', !(isEdit && emp?.aadhar_number));
 }
 </script>
 

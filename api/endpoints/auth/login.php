@@ -11,22 +11,25 @@ require_once __DIR__ . '/../../middleware/rate_limit.php';
 rate_limit_login();
 
 $input = get_json_input();
-validate_required($input, ['username', 'password']);
+validate_required($input, ['email', 'password']);
 
-$username = sanitize_string($input['username']);
-$password = $input['password'];
+$email     = sanitize_string($input['email']);
+$password  = $input['password'];
 $device_id = sanitize_string($input['device_id'] ?? '');
 
 $pdo = get_db_connection();
 $stmt = $pdo->prepare(
     "SELECT id, full_name, password, device_id, branch_id, is_active
-     FROM employees WHERE username = :username LIMIT 1"
+     FROM employees WHERE email = :email LIMIT 1"
 );
-$stmt->execute([':username' => $username]);
+$stmt->execute([':email' => $email]);
 $employee = $stmt->fetch();
 
-if (!$employee || !password_verify($password, $employee['password'])) {
-    error_response('Invalid username or password', 401);
+if (!$employee) {
+    error_response('No account found with this email address', 401);
+}
+if (!password_verify($password, $employee['password'])) {
+    error_response('Incorrect password', 401);
 }
 
 if (!$employee['is_active']) {

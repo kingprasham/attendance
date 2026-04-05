@@ -2,13 +2,13 @@
 // api/config/constants.php
 
 // JWT
-define('JWT_SECRET', 'CHANGE_THIS_TO_A_RANDOM_64_CHAR_STRING_IN_PRODUCTION');
+define('JWT_SECRET', 'Kal1naEng!n33r1ng@Att3nd@nc3$JWT#S3cr3tK3y2026!xZ9pQmRvLwKjHnBt');
 define('JWT_ACCESS_EXPIRY', 1800);      // 30 minutes
 define('JWT_REFRESH_EXPIRY', 2592000);  // 30 days
 define('JWT_ALGORITHM', 'HS256');
 
 // AES Encryption (for PAN, Aadhar)
-define('AES_KEY', 'CHANGE_THIS_TO_A_RANDOM_32_CHAR_KEY_NOW');
+define('AES_KEY', 'KaL1n@En9!AES256K3y#2026$Pr@sh@m');
 define('AES_METHOD', 'aes-256-cbc');
 
 // Timezone

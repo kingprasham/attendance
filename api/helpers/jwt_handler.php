@@ -5,6 +5,7 @@ require_once __DIR__ . '/../config/constants.php';
 require_once __DIR__ . '/../config/database.php';
 
 // Load php-jwt library
+require_once __DIR__ . '/../lib/php-jwt/JWTExceptionWithPayloadInterface.php';
 require_once __DIR__ . '/../lib/php-jwt/BeforeValidException.php';
 require_once __DIR__ . '/../lib/php-jwt/ExpiredException.php';
 require_once __DIR__ . '/../lib/php-jwt/SignatureInvalidException.php';

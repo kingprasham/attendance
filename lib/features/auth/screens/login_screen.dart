@@ -13,13 +13,13 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
   @override
   void dispose() {
-    _usernameController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -27,7 +27,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _login() async {
     if (!_formKey.currentState!.validate()) return;
     final success = await ref.read(authProvider.notifier).login(
-      _usernameController.text.trim(),
+      _emailController.text.trim(),
       _passwordController.text,
     );
     if (success && mounted) {
@@ -83,13 +83,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 child: Column(
                   children: [
                     TextFormField(
-                      controller: _usernameController,
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      autocorrect: false,
                       decoration: const InputDecoration(
-                        labelText: 'Username',
-                        prefixIcon: Icon(Icons.person_outline),
+                        labelText: 'Email',
+                        prefixIcon: Icon(Icons.email_outlined),
                       ),
-                      validator: (v) =>
-                          (v == null || v.trim().isEmpty) ? 'Enter your username' : null,
+                      validator: (v) {
+                        if (v == null || v.trim().isEmpty) return 'Enter your email';
+                        if (!v.contains('@')) return 'Enter a valid email address';
+                        return null;
+                      },
                       textInputAction: TextInputAction.next,
                     ),
                     const SizedBox(height: 16),
@@ -111,22 +116,32 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           (v == null || v.isEmpty) ? 'Enter your password' : null,
                       onFieldSubmitted: (_) => _login(),
                     ),
-                    const SizedBox(height: 8),
-                    if (state.error != null)
+                    if (state.error != null) ...[
+                      const SizedBox(height: 12),
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.all(12),
-                        margin: const EdgeInsets.only(top: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                         decoration: BoxDecoration(
-                          color: AppColors.error.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: AppColors.error.withOpacity(0.3)),
+                          color: AppColors.error.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppColors.error.withOpacity(0.4)),
                         ),
-                        child: Text(
-                          state.error!,
-                          style: const TextStyle(color: AppColors.error, fontSize: 13),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.error_outline,
+                                color: AppColors.error, size: 18),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                state.error!,
+                                style: const TextStyle(
+                                    color: AppColors.error, fontSize: 13),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                    ],
                     const SizedBox(height: 24),
                     ElevatedButton(
                       onPressed: state.isLoading ? null : _login,

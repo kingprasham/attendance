@@ -14,8 +14,8 @@ $uri = $_SERVER['REQUEST_URI'];
 // Strip query string and base path
 $uri = parse_url($uri, PHP_URL_PATH);
 
-// Remove /api/ prefix if present (adjust based on your hosting path)
-$uri = preg_replace('#^/api/#', '/', $uri);
+// Remove everything up to and including /api/ (works for any subdirectory depth)
+$uri = preg_replace('#^.*/api/#', '/', $uri);
 $uri = '/' . trim($uri, '/');
 
 // Map URI to endpoint file

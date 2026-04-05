@@ -11,7 +11,7 @@ function get_db_connection() {
     $host = 'localhost';
     $dbname = 'kalina_attendance';
     $username = 'aaiacc_admin';
-    $password = 'Prasham123';
+    $password = 'Prasham123$';
 
     try {
         $pdo = new PDO(

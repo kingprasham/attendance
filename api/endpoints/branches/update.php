@@ -22,7 +22,13 @@ $allowed = ['name', 'address', 'latitude', 'longitude', 'radius_meters'];
 foreach ($allowed as $field) {
     if (isset($input[$field])) {
         $fields[] = "{$field} = :{$field}";
-        $params[":{$field}"] = $field === 'radius_meters' ? (int)$input[$field] : sanitize_string($input[$field]);
+        if ($field === 'radius_meters') {
+            $params[":{$field}"] = (int)$input[$field];
+        } elseif (in_array($field, ['latitude', 'longitude'])) {
+            $params[":{$field}"] = (float)$input[$field];
+        } else {
+            $params[":{$field}"] = sanitize_string($input[$field]);
+        }
     }
 }
 

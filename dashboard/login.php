@@ -17,11 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($email && $password) {
         $db   = get_db_connection();
-        $stmt = $db->prepare('SELECT id, email, password_hash FROM admins WHERE email = ? LIMIT 1');
+        $stmt = $db->prepare('SELECT id, email, password FROM admins WHERE email = ? LIMIT 1');
         $stmt->execute([$email]);
         $admin = $stmt->fetch();
 
-        if ($admin && password_verify($password, $admin['password_hash'])) {
+        if ($admin && password_verify($password, $admin['password'])) {
             $_SESSION['admin_id']    = $admin['id'];
             $_SESSION['admin_email'] = $admin['email'];
             header('Location: pages/dashboard.php');

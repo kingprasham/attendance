@@ -17,7 +17,7 @@ $stmt = $db->prepare("
         SUM(status = 'late') AS late,
         SUM(status = 'half_day') AS half_day
     FROM attendance_logs
-    WHERE DATE(clock_in_time) = ?
+    WHERE date = ?
 ");
 $stmt->execute([$today]);
 $todayStats = $stmt->fetch();
@@ -40,8 +40,8 @@ $recent = $db->prepare("
     FROM attendance_logs al
     JOIN employees e ON al.employee_id = e.id
     JOIN branches b ON e.branch_id = b.id
-    WHERE DATE(al.clock_in_time) = ?
-    ORDER BY al.clock_in_time DESC
+    WHERE al.date = ?
+    ORDER BY al.clock_in DESC
     LIMIT 10
 ");
 $recent->execute([$today]);
@@ -164,8 +164,8 @@ require_once __DIR__ . '/../includes/sidebar.php';
                                 <small class="text-muted"><?= htmlspecialchars($r['employee_code']) ?></small>
                             </td>
                             <td><?= htmlspecialchars($r['branch_name']) ?></td>
-                            <td><?= $r['clock_in_time'] ? date('h:i A', strtotime($r['clock_in_time'] . ' +5:30 hours +30 minutes')) : '—' ?></td>
-                            <td><?= $r['clock_out_time'] ? date('h:i A', strtotime($r['clock_out_time'] . ' +5:30 hours +30 minutes')) : '—' ?></td>
+                            <td><?= $r['clock_in']  ? date('h:i A', strtotime($r['clock_in'])  + 19800) : '—' ?></td>
+                            <td><?= $r['clock_out'] ? date('h:i A', strtotime($r['clock_out']) + 19800) : '—' ?></td>
                             <td><?php
                                 $badges = ['present'=>'success','late'=>'warning','half_day'=>'info'];
                                 $badge = $badges[$r['status']] ?? 'secondary';

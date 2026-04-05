@@ -1,0 +1,277 @@
+<h2>Flutter App Structure — Kalina Engineering Attendance</h2>
+<p class="subtitle">Section 4 of 5 — Mobile app architecture and screens</p>
+
+<!-- Directory Structure -->
+<div class="mockup">
+  <div class="mockup-header">Flutter Project Structure (lib/)</div>
+  <div class="mockup-body" style="padding:24px;background:#0d1117;font-family:monospace;font-size:12px;color:#ccc;line-height:1.7;">
+    <pre style="margin:0;color:#ccc;">
+lib/
+├── main.dart                          <span style="color:#6b7280;"># App entry, ProviderScope, routing</span>
+├── app/
+│   ├── theme.dart                     <span style="color:#6b7280;"># Kalina colors: dark blue, light blue, white</span>
+│   └── routes.dart                    <span style="color:#6b7280;"># GoRouter route definitions</span>
+├── core/
+│   ├── constants/
+│   │   ├── api_endpoints.dart         <span style="color:#6b7280;"># Base URL + all endpoint paths</span>
+│   │   └── app_colors.dart            <span style="color:#6b7280;"># Color constants from logo</span>
+│   ├── network/
+│   │   ├── api_client.dart            <span style="color:#6b7280;"># Dio instance + interceptors</span>
+│   │   ├── auth_interceptor.dart      <span style="color:#6b7280;"># Auto-attach JWT, handle 401 refresh</span>
+│   │   └── api_exceptions.dart        <span style="color:#6b7280;"># Custom error types</span>
+│   ├── services/
+│   │   ├── auth_service.dart          <span style="color:#6b7280;"># Login, logout, token storage</span>
+│   │   ├── biometric_service.dart     <span style="color:#6b7280;"># local_auth fingerprint/face</span>
+│   │   ├── location_service.dart      <span style="color:#6b7280;"># Geolocator + fake GPS detection</span>
+│   │   ├── device_service.dart        <span style="color:#6b7280;"># persistent_device_id</span>
+│   │   ├── notification_service.dart  <span style="color:#6b7280;"># Firebase FCM setup</span>
+│   │   └── secure_storage.dart        <span style="color:#6b7280;"># flutter_secure_storage wrapper</span>
+│   └── utils/
+│       ├── date_utils.dart            <span style="color:#6b7280;"># IST conversion helpers</span>
+│       └── validators.dart            <span style="color:#6b7280;"># Input validation</span>
+├── features/
+│   ├── auth/
+│   │   ├── providers/
+│   │   │   └── auth_provider.dart     <span style="color:#6b7280;"># Riverpod auth state</span>
+│   │   └── screens/
+│   │       ├── login_screen.dart      <span style="color:#6b7280;"># Username/password + biometric</span>
+│   │       └── splash_screen.dart     <span style="color:#6b7280;"># Auto-login check</span>
+│   ├── attendance/
+│   │   ├── providers/
+│   │   │   └── attendance_provider.dart
+│   │   ├── screens/
+│   │   │   └── attendance_screen.dart <span style="color:#6b7280;"># Clock in/out + today's status</span>
+│   │   └── widgets/
+│   │       ├── clock_button.dart      <span style="color:#6b7280;"># Big clock in/out button</span>
+│   │       └── attendance_calendar.dart <span style="color:#6b7280;"># Monthly grid view</span>
+│   ├── leaves/
+│   │   ├── providers/
+│   │   │   └── leave_provider.dart
+│   │   ├── screens/
+│   │   │   ├── leave_list_screen.dart <span style="color:#6b7280;"># Leave history + balances</span>
+│   │   │   └── apply_leave_screen.dart <span style="color:#6b7280;"># Leave application form</span>
+│   │   └── widgets/
+│   │       └── leave_balance_card.dart
+│   ├── salary/
+│   │   ├── providers/
+│   │   │   └── salary_provider.dart
+│   │   └── screens/
+│   │       ├── salary_list_screen.dart <span style="color:#6b7280;"># Monthly salary slips list</span>
+│   │       └── salary_detail_screen.dart <span style="color:#6b7280;"># Detailed salary breakdown</span>
+│   ├── profile/
+│   │   ├── providers/
+│   │   │   └── profile_provider.dart
+│   │   └── screens/
+│   │       └── profile_screen.dart    <span style="color:#6b7280;"># Employee personal details</span>
+│   ├── notifications/
+│   │   ├── providers/
+│   │   │   └── notification_provider.dart
+│   │   └── screens/
+│   │       └── notification_screen.dart
+│   └── holidays/
+│       ├── providers/
+│       │   └── holiday_provider.dart
+│       └── screens/
+│           └── holiday_screen.dart    <span style="color:#6b7280;"># Company holiday calendar</span>
+└── shared/
+    └── widgets/
+        ├── app_drawer.dart            <span style="color:#6b7280;"># Navigation drawer</span>
+        ├── loading_overlay.dart
+        └── error_dialog.dart
+    </pre>
+  </div>
+</div>
+
+<!-- Screen Mockups -->
+<div style="margin-top:24px;">
+  <h3>Key App Screens</h3>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:16px;">
+
+    <!-- Login Screen -->
+    <div style="background:#0d1117;border:2px solid #333;border-radius:20px;padding:0;overflow:hidden;max-width:220px;">
+      <div style="background:#0055A4;padding:40px 16px 30px;text-align:center;">
+        <div style="font-size:32px;margin-bottom:8px;">🏭</div>
+        <div style="font-weight:bold;color:white;font-size:14px;">KALINA</div>
+        <div style="color:#8bb8e8;font-size:10px;">ENGINEERING PVT. LTD.</div>
+      </div>
+      <div style="padding:20px 16px;">
+        <div style="background:#1a2332;border:1px solid #333;border-radius:8px;padding:10px;margin-bottom:10px;color:#666;font-size:11px;">Username</div>
+        <div style="background:#1a2332;border:1px solid #333;border-radius:8px;padding:10px;margin-bottom:16px;color:#666;font-size:11px;">Password</div>
+        <div style="background:#0055A4;border-radius:8px;padding:12px;text-align:center;color:white;font-size:12px;font-weight:bold;">LOGIN</div>
+        <div style="text-align:center;margin-top:16px;color:#666;font-size:10px;">— or —</div>
+        <div style="text-align:center;margin-top:12px;font-size:24px;">👆</div>
+        <div style="text-align:center;color:#4A9BD9;font-size:10px;">Use Fingerprint</div>
+      </div>
+    </div>
+
+    <!-- Home/Attendance Screen -->
+    <div style="background:#0d1117;border:2px solid #333;border-radius:20px;padding:0;overflow:hidden;max-width:220px;">
+      <div style="background:#0055A4;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="color:white;font-size:12px;font-weight:bold;">☰ Home</div>
+        <div style="color:white;font-size:14px;">🔔</div>
+      </div>
+      <div style="padding:16px;">
+        <div style="text-align:center;margin-bottom:12px;">
+          <div style="color:#8bb8e8;font-size:10px;">Welcome back</div>
+          <div style="color:white;font-size:14px;font-weight:bold;">Rajesh Kumar</div>
+          <div style="color:#6b7280;font-size:10px;">Borivali Factory</div>
+        </div>
+        <div style="background:#1a2332;border:2px solid #10b981;border-radius:50%;width:100px;height:100px;margin:16px auto;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+          <div style="color:#10b981;font-size:10px;font-weight:bold;">CLOCK IN</div>
+          <div style="color:#10b981;font-size:18px;">👆</div>
+        </div>
+        <div style="text-align:center;color:#6b7280;font-size:10px;margin-bottom:16px;">Tap to mark attendance</div>
+        <div style="background:#1a2332;border-radius:8px;padding:10px;margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;font-size:10px;">
+            <span style="color:#8bb8e8;">Today</span>
+            <span style="color:#10b981;">✓ Present</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;margin-top:4px;">
+            <span style="color:#6b7280;">In: 09:05 AM</span>
+            <span style="color:#6b7280;">Out: —</span>
+          </div>
+        </div>
+        <div style="background:#1a2332;border-radius:8px;padding:10px;">
+          <div style="color:#8bb8e8;font-size:10px;margin-bottom:4px;">This Month</div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:#6b7280;">
+            <span>Present: 22</span>
+            <span>Leave: 1</span>
+            <span>Absent: 0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leave Screen -->
+    <div style="background:#0d1117;border:2px solid #333;border-radius:20px;padding:0;overflow:hidden;max-width:220px;">
+      <div style="background:#0055A4;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;">
+        <div style="color:white;font-size:12px;font-weight:bold;">← Leaves</div>
+        <div style="color:white;font-size:11px;">+ Apply</div>
+      </div>
+      <div style="padding:16px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+          <div style="background:#1a2332;border-radius:8px;padding:8px;text-align:center;">
+            <div style="color:#4A9BD9;font-size:16px;font-weight:bold;">8</div>
+            <div style="color:#6b7280;font-size:9px;">Casual Left</div>
+          </div>
+          <div style="background:#1a2332;border-radius:8px;padding:8px;text-align:center;">
+            <div style="color:#10b981;font-size:16px;font-weight:bold;">10</div>
+            <div style="color:#6b7280;font-size:9px;">Sick Left</div>
+          </div>
+          <div style="background:#1a2332;border-radius:8px;padding:8px;text-align:center;">
+            <div style="color:#f59e0b;font-size:16px;font-weight:bold;">15</div>
+            <div style="color:#6b7280;font-size:9px;">Earned Left</div>
+          </div>
+          <div style="background:#1a2332;border-radius:8px;padding:8px;text-align:center;">
+            <div style="color:#8b5cf6;font-size:16px;font-weight:bold;">2</div>
+            <div style="color:#6b7280;font-size:9px;">Comp Off</div>
+          </div>
+        </div>
+        <div style="color:#8bb8e8;font-size:10px;margin-bottom:8px;">Recent Requests</div>
+        <div style="background:#1a2332;border-radius:8px;padding:10px;margin-bottom:6px;">
+          <div style="display:flex;justify-content:space-between;font-size:10px;">
+            <span style="color:white;">Casual Leave</span>
+            <span style="color:#10b981;font-size:9px;">Approved</span>
+          </div>
+          <div style="color:#6b7280;font-size:9px;">15 Mar - 16 Mar 2026</div>
+        </div>
+        <div style="background:#1a2332;border-radius:8px;padding:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:10px;">
+            <span style="color:white;">Sick Leave</span>
+            <span style="color:#f59e0b;font-size:9px;">Pending</span>
+          </div>
+          <div style="color:#6b7280;font-size:9px;">20 Mar 2026</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Salary Screen -->
+    <div style="background:#0d1117;border:2px solid #333;border-radius:20px;padding:0;overflow:hidden;max-width:220px;">
+      <div style="background:#0055A4;padding:12px 16px;">
+        <div style="color:white;font-size:12px;font-weight:bold;">← Salary Slips</div>
+      </div>
+      <div style="padding:16px;">
+        <div style="background:#1a2332;border:1px solid #10b981;border-radius:10px;padding:14px;margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+            <span style="color:#8bb8e8;font-size:11px;">March 2026</span>
+            <span style="color:#10b981;font-size:10px;">Credited</span>
+          </div>
+          <div style="color:white;font-size:20px;font-weight:bold;">₹45,000</div>
+          <div style="color:#6b7280;font-size:10px;margin-top:6px;">
+            Working: 26 | Present: 24 | Leave: 2
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px;padding-top:8px;border-top:1px solid #333;">
+            <div style="font-size:9px;color:#6b7280;">
+              Gross: ₹50,000<br>
+              Deductions: ₹5,000
+            </div>
+            <div style="font-size:9px;color:#4A9BD9;align-self:flex-end;">View Details →</div>
+          </div>
+        </div>
+        <div style="background:#1a2332;border-radius:10px;padding:14px;margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+            <span style="color:#8bb8e8;font-size:11px;">February 2026</span>
+            <span style="color:#10b981;font-size:10px;">Credited</span>
+          </div>
+          <div style="color:white;font-size:20px;font-weight:bold;">₹48,000</div>
+          <div style="color:#6b7280;font-size:10px;margin-top:6px;">
+            Working: 24 | Present: 24 | Leave: 0
+          </div>
+        </div>
+        <div style="background:#1a2332;border-radius:10px;padding:14px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+            <span style="color:#8bb8e8;font-size:11px;">January 2026</span>
+            <span style="color:#10b981;font-size:10px;">Credited</span>
+          </div>
+          <div style="color:white;font-size:20px;font-weight:bold;">₹46,500</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Flutter Packages -->
+<div style="margin-top:24px;padding:16px;background:#1a1a2e;border:1px solid #333;border-radius:10px;">
+  <h4 style="color:#4A9BD9;margin-top:0;">Flutter Packages (pubspec.yaml)</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;color:#ccc;">
+    <div><code style="color:#10b981;">flutter_riverpod</code> — State management</div>
+    <div><code style="color:#10b981;">dio</code> — HTTP client</div>
+    <div><code style="color:#10b981;">go_router</code> — Navigation</div>
+    <div><code style="color:#10b981;">local_auth</code> — Biometric auth</div>
+    <div><code style="color:#10b981;">geolocator</code> — GPS location</div>
+    <div><code style="color:#10b981;">persistent_device_id</code> — Device binding</div>
+    <div><code style="color:#10b981;">flutter_secure_storage</code> — Encrypted storage</div>
+    <div><code style="color:#10b981;">firebase_messaging</code> — Push notifications</div>
+    <div><code style="color:#10b981;">hive_flutter</code> — Local caching</div>
+    <div><code style="color:#10b981;">safe_device</code> — Fake GPS detection</div>
+    <div><code style="color:#10b981;">intl</code> — Date/time formatting</div>
+    <div><code style="color:#10b981;">table_calendar</code> — Calendar widget</div>
+  </div>
+</div>
+
+<!-- Color Theme -->
+<div style="margin-top:16px;padding:16px;background:#1a1a2e;border:1px solid #333;border-radius:10px;">
+  <h4 style="color:#4A9BD9;margin-top:0;">Kalina Color Theme</h4>
+  <div style="display:flex;gap:16px;align-items:center;">
+    <div style="text-align:center;">
+      <div style="width:60px;height:60px;background:#0055A4;border-radius:10px;margin-bottom:4px;"></div>
+      <div style="color:#ccc;font-size:10px;">Dark Blue<br>#0055A4</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="width:60px;height:60px;background:#4A9BD9;border-radius:10px;margin-bottom:4px;"></div>
+      <div style="color:#ccc;font-size:10px;">Light Blue<br>#4A9BD9</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="width:60px;height:60px;background:#FFFFFF;border-radius:10px;margin-bottom:4px;border:1px solid #333;"></div>
+      <div style="color:#ccc;font-size:10px;">White<br>#FFFFFF</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="width:60px;height:60px;background:#0A1628;border-radius:10px;margin-bottom:4px;border:1px solid #333;"></div>
+      <div style="color:#ccc;font-size:10px;">Dark BG<br>#0A1628</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="width:60px;height:60px;background:#1A2332;border-radius:10px;margin-bottom:4px;border:1px solid #333;"></div>
+      <div style="color:#ccc;font-size:10px;">Card BG<br>#1A2332</div>
+    </div>
+  </div>
+</div>

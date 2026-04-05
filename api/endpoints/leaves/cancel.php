@@ -14,7 +14,7 @@ validate_required($input, ['leave_id']);
 
 $pdo = get_db_connection();
 $stmt = $pdo->prepare(
-    "DELETE FROM leave_requests
+    "UPDATE leave_requests SET status = 'cancelled'
      WHERE id = :id AND employee_id = :eid AND status = 'pending'"
 );
 $stmt->execute([':id' => (int)$input['leave_id'], ':eid' => $employee_id]);

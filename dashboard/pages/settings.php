@@ -25,15 +25,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (strlen($newPwd) < 8) {
             $msg = 'Password must be at least 8 characters.'; $msgType = 'danger';
         } else {
-            $admin = $db->prepare("SELECT password_hash FROM admins WHERE id = ?");
+            $admin = $db->prepare("SELECT password FROM admins WHERE id = ?");
             $admin->execute([$_SESSION['admin_id']]);
             $row = $admin->fetch();
 
-            if (!$row || !password_verify($current, $row['password_hash'])) {
+            if (!$row || !password_verify($current, $row['password'])) {
                 $msg = 'Current password is incorrect.'; $msgType = 'danger';
             } else {
                 $hash = password_hash($newPwd, PASSWORD_BCRYPT, ['cost' => 12]);
-                $db->prepare("UPDATE admins SET password_hash = ? WHERE id = ?")
+                $db->prepare("UPDATE admins SET password = ? WHERE id = ?")
                    ->execute([$hash, $_SESSION['admin_id']]);
                 $msg = 'Password updated successfully.';
             }

@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalina Engineering — Flutter App Mockups</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+    padding: 40px 20px;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 800;
+    color: #0055A4;
+    margin-bottom: 6px;
+  }
+  .page-subtitle {
+    text-align: center;
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0055A4;
+    margin: 40px 0 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e5e7eb;
+  }
+
+  /* Phone Mockup */
+  .phones-grid {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    margin: 30px 0;
+  }
+
+  .phone-wrapper {
+    text-align: center;
+  }
+  .phone-wrapper .phone-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 12px;
+  }
+
+  .phone {
+    width: 280px;
+    height: 580px;
+    background: #ffffff;
+    border-radius: 36px;
+    border: 3px solid #d1d5db;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.08);
+    position: relative;
+  }
+
+  /* Status Bar */
+  .status-bar {
+    background: #0055A4;
+    padding: 8px 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: white;
+    font-weight: 600;
+  }
+  .status-bar .time { font-size: 12px; }
+  .status-bar .icons { display: flex; gap: 4px; font-size: 10px; }
+
+  /* App Bar */
+  .app-bar {
+    background: #0055A4;
+    padding: 14px 20px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .app-bar-title {
+    color: white;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .app-bar-icon {
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .app-bar-back {
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Content area */
+  .screen-content {
+    padding: 0;
+    overflow-y: auto;
+    height: calc(100% - 95px);
+    background: #f8f9fb;
+  }
+  .screen-content.no-bottom { height: calc(100% - 70px); }
+
+  /* Bottom Nav */
+  .bottom-nav {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0 20px;
+  }
+  .nav-item {
+    text-align: center;
+    font-size: 9px;
+    color: #9ca3af;
+    font-weight: 500;
+  }
+  .nav-item.active { color: #0055A4; }
+  .nav-item .nav-icon { font-size: 18px; margin-bottom: 2px; }
+
+  /* Cards */
+  .card {
+    background: white;
+    border-radius: 14px;
+    padding: 16px;
+    margin: 0 16px 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    border: 1px solid #f0f0f0;
+  }
+
+  /* Stat Grid */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 0 16px 12px;
+  }
+  .stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border: 1px solid #f0f0f0;
+  }
+  .stat-number {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -1px;
+  }
+  .stat-label {
+    font-size: 10px;
+    color: #6b7280;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  /* List Items */
+  .list-item {
+    background: white;
+    padding: 14px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .list-item:first-child { border-radius: 12px 12px 0 0; }
+  .list-item:last-child { border-radius: 0 0 12px 12px; border-bottom: none; }
+  .list-item-title { font-size: 13px; font-weight: 600; color: #1f2937; }
+  .list-item-sub { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+
+  /* Badge */
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .badge-green { background: #ecfdf5; color: #059669; }
+  .badge-yellow { background: #fffbeb; color: #d97706; }
+  .badge-red { background: #fef2f2; color: #dc2626; }
+  .badge-blue { background: #eff6ff; color: #2563eb; }
+
+  /* Button */
+  .btn-primary {
+    background: #0055A4;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    width: 100%;
+    text-align: center;
+    letter-spacing: 0.3px;
+  }
+
+  /* Input */
+  .input-field {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #9ca3af;
+    background: #fafbfc;
+    margin-bottom: 12px;
+  }
+
+  /* Salary Amount */
+  .salary-amount {
+    font-size: 24px;
+    font-weight: 800;
+    color: #1f2937;
+    letter-spacing: -0.5px;
+  }
+
+  /* Section Headers in content */
+  .section-header {
+    font-size: 11px;
+    font-weight: 700;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 16px 16px 8px;
+  }
+
+  /* Clock button */
+  .clock-container {
+    display: flex;
+    justify-content: center;
+    padding: 24px 0 16px;
+  }
+  .clock-btn {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+  }
+  .clock-btn-in {
+    background: linear-gradient(135deg, #0055A4 0%, #4A9BD9 100%);
+    box-shadow: 0 8px 30px rgba(0,85,164,0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+  }
+  .clock-btn-out {
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    box-shadow: 0 8px 30px rgba(220,38,38,0.35);
+  }
+  .clock-btn::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    border: 2px dashed rgba(0,85,164,0.2);
+  }
+  .clock-btn .clock-icon { font-size: 36px; margin-bottom: 4px; }
+  .clock-btn .clock-text {
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .clock-btn .clock-sub {
+    color: rgba(255,255,255,0.7);
+    font-size: 10px;
+    margin-top: 2px;
+  }
+
+  /* Project structure */
+  .structure-box {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #374151;
+    overflow-x: auto;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .structure-box .comment { color: #9ca3af; }
+  .structure-box .folder { color: #0055A4; font-weight: 600; }
+  .structure-box .file { color: #4A9BD9; }
+
+  /* Color palette */
+  .palette {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+  .color-swatch {
+    text-align: center;
+  }
+  .swatch {
+    width: 80px;
+    height: 80px;
+    border-radius: 16px;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .swatch-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #374151;
+  }
+  .swatch-hex {
+    font-size: 11px;
+    color: #9ca3af;
+    font-family: monospace;
+  }
+
+  /* Packages grid */
+  .packages-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 16px 0;
+  }
+  .package-item {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .package-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #0055A4;
+    font-family: monospace;
+  }
+  .package-desc {
+    font-size: 10px;
+    color: #6b7280;
+  }
+  .package-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4A9BD9;
+    flex-shrink: 0;
+  }
+
+  /* Welcome header */
+  .welcome-section {
+    background: white;
+    padding: 16px;
+    margin: 0 0 2px;
+  }
+  .welcome-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+  }
+  .welcome-sub {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
+  }
+  .welcome-date {
+    font-size: 11px;
+    color: #4A9BD9;
+    font-weight: 500;
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Kalina Engineering — Mobile App Design</h1>
+<p class="page-subtitle">Flutter app screens, project structure, and color theme</p>
+
+<!-- ====== SCREEN MOCKUPS ====== -->
+<div class="section-title">App Screen Mockups</div>
+
+<div class="phones-grid">
+
+  <!-- ===== LOGIN SCREEN ===== -->
+  <div class="phone-wrapper">
+    <div class="phone-label">Login Screen</div>
+    <div class="phone">
+      <div class="status-bar">
+        <span class="time">9:41</span>
+        <div class="icons">
+          <span>&#9679;&#9679;&#9679;&#9679;</span>
+          <span>&#9016;</span>
+        </div>
+      </div>
+      <div class="screen-content no-bottom" style="background:white;">
+        <!-- Logo Area -->
+        <div style="background: linear-gradient(160deg, #0055A4 0%, #003d7a 100%); padding: 50px 30px 40px; text-align: center; border-radius: 0 0 30px 30px;">
+          <div style="width:72px;height:72px;background:white;border-radius:18px;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.15);">
+            <div style="font-size:28px;font-weight:900;color:#0055A4;font-family:Inter;">K</div>
+          </div>
+          <div style="color:white;font-size:20px;font-weight:800;letter-spacing:1px;">KALINA</div>
+          <div style="color:rgba(255,255,255,0.6);font-size:10px;font-weight:500;letter-spacing:2px;margin-top:4px;">ENGINEERING PVT. LTD.</div>
+        </div>
+
+        <div style="padding:32px 24px;">
+          <div style="font-size:22px;font-weight:700;color:#1f2937;margin-bottom:4px;">Welcome back</div>
+          <div style="font-size:13px;color:#9ca3af;margin-bottom:28px;">Sign in to mark your attendance</div>
+
+          <div style="margin-bottom:6px;font-size:11px;font-weight:600;color:#374151;">Username</div>
+          <div class="input-field">Enter your username</div>
+
+          <div style="margin-bottom:6px;font-size:11px;font-weight:600;color:#374151;">Password</div>
+          <div class="input-field" style="margin-bottom:24px;">Enter your password</div>
+
+          <div class="btn-primary" style="margin-bottom:20px;">Sign In</div>
+
+          <div style="text-align:center;position:relative;margin:20px 0;">
+            <div style="border-top:1px solid #e5e7eb;position:absolute;top:50%;left:0;right:0;"></div>
+            <span style="background:white;padding:0 16px;position:relative;font-size:11px;color:#9ca3af;">or continue with</span>
+          </div>
+
+          <div style="display:flex;justify-content:center;margin-top:20px;gap:12px;align-items:center;">
+            <div style="width:56px;height:56px;border:1.5px solid #e5e7eb;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:28px;">
+              &#128270;
+            </div>
+          </div>
+          <div style="text-align:center;font-size:11px;color:#4A9BD9;font-weight:500;margin-top:8px;">Use Biometrics</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HOME / ATTENDANCE SCREEN ===== -->
+  <div class="phone-wrapper">
+    <div class="phone-label">Home — Attendance</div>
+    <div class="phone">
+      <div class="status-bar">
+        <span class="time">9:41</span>
+        <div class="icons">
+          <span>&#9679;&#9679;&#9679;&#9679;</span>
+          <span>&#9016;</span>
+        </div>
+      </div>
+      <div class="app-bar">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="app-bar-icon">&#9776;</div>
+          <div class="app-bar-title">Kalina Engineering</div>
+        </div>
+        <div style="position:relative;">
+          <div class="app-bar-icon">&#128276;</div>
+          <div style="position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:#ef4444;border-radius:50%;border:1.5px solid #0055A4;"></div>
+        </div>
+      </div>
+      <div class="screen-content" style="padding-bottom:70px;">
+        <!-- Welcome -->
+        <div class="welcome-section">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <div style="font-size:12px;color:#6b7280;">Good Morning,</div>
+              <div class="welcome-name">Rajesh Kumar</div>
+              <div class="welcome-sub">Borivali Factory &middot; Production Dept</div>
+            </div>
+            <div style="width:44px;height:44px;background:linear-gradient(135deg,#0055A4,#4A9BD9);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:16px;">RK</div>
+          </div>
+          <div class="welcome-date">Tuesday, 1 April 2026</div>
+        </div>
+
+        <!-- Clock Button -->
+        <div class="clock-container">
+          <div class="clock-btn clock-btn-in">
+            <div class="clock-icon" style="filter:brightness(10);">&#9201;</div>
+            <div class="clock-text">Clock In</div>
+            <div class="clock-sub">Tap to mark</div>
+          </div>
+        </div>
+
+        <!-- Today's Status -->
+        <div class="section-header">Today's Status</div>
+        <div class="card" style="margin-bottom:12px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="font-size:13px;font-weight:600;color:#1f2937;">Attendance</div>
+            <span class="badge badge-green">Present</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <div style="text-align:center;flex:1;">
+              <div style="font-size:10px;color:#9ca3af;margin-bottom:2px;">Clock In</div>
+              <div style="font-size:15px;font-weight:700;color:#0055A4;">09:05 AM</div>
+            </div>
+            <div style="width:1px;background:#e5e7eb;margin:0 12px;"></div>
+            <div style="text-align:center;flex:1;">
+              <div style="font-size:10px;color:#9ca3af;margin-bottom:2px;">Clock Out</div>
+              <div style="font-size:15px;font-weight:700;color:#6b7280;">--:--</div>
+            </div>
+            <div style="width:1px;background:#e5e7eb;margin:0 12px;"></div>
+            <div style="text-align:center;flex:1;">
+              <div style="font-size:10px;color:#9ca3af;margin-bottom:2px;">Hours</div>
+              <div style="font-size:15px;font-weight:700;color:#059669;">4h 32m</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monthly Summary -->
+        <div class="section-header">April Summary</div>
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-number" style="color:#059669;">22</div>
+            <div class="stat-label">Present</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" style="color:#2563eb;">1</div>
+            <div class="stat-label">On Leave</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" style="color:#dc2626;">0</div>
+            <div class="stat-label">Absent</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" style="color:#d97706;">2</div>
+            <div class="stat-label">Late</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Nav -->
+      <div class="bottom-nav">
+        <div class="nav-item active">
+          <div class="nav-icon">&#127968;</div>Home
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">&#128197;</div>Attendance
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">&#9992;&#65039;</div>Leaves
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">&#128176;</div>Salary
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">&#128100;</div>Profile
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LEAVES SCREEN ===== -->
+  <div class="phone-wrapper">
+    <div class="phone-label">Leave Management</div>
+    <div class="phone">
+      <div class="status-bar">
+        <span class="time">9:41</span>
+        <div class="icons">
+          <span>&#9679;&#9679;&#9679;&#9679;</span>
+          <span>&#9016;</span>
+        </div>
+      </div>
+      <div class="app-bar">
+        <div class="app-bar-back">&#8592; Leaves</div>
+        <div style="background:white;color:#0055A4;font-size:11px;font-weight:700;padding:6px 14px;border-radius:20px;">+ Apply</div>
+      </div>
+      <div class="screen-content" style="padding-bottom:70px;">
+        <!-- Leave Balances -->
+        <div class="section-header">Leave Balances (2026)</div>
+        <div class="stat-grid">
+          <div class="stat-card" style="border-left:3px solid #0055A4;">
+            <div class="stat-number" style="color:#0055A4;">8</div>
+            <div class="stat-label">Casual Leave</div>
+            <div style="font-size:9px;color:#9ca3af;margin-top:2px;">of 12 remaining</div>
+          </div>
+          <div class="stat-card" style="border-left:3px solid #059669;">
+            <div class="stat-number" style="color:#059669;">10</div>
+            <div class="stat-label">Sick Leave</div>
+            <div style="font-size:9px;color:#9ca3af;margin-top:2px;">of 12 remaining</div>
+          </div>
+          <div class="stat-card" style="border-left:3px solid #d97706;">
+            <div class="stat-number" style="color:#d97706;">15</div>
+            <div class="stat-label">Earned Leave</div>
+            <div style="font-size:9px;color:#9ca3af;margin-top:2px;">of 15 remaining</div>
+          </div>
+          <div class="stat-card" style="border-left:3px solid #8b5cf6;">
+            <div class="stat-number" style="color:#8b5cf6;">2</div>
+            <div class="stat-label">Comp Off</div>
+            <div style="font-size:9px;color:#9ca3af;margin-top:2px;">2 earned</div>
+          </div>
+        </div>
+
+        <!-- Recent Requests -->
+        <div class="section-header">Recent Requests</div>
+        <div style="margin:0 16px;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);border:1px solid #f0f0f0;">
+          <div class="list-item">
+            <div>
+              <div class="list-item-title">Casual Leave</div>
+              <div class="list-item-sub">15 Mar — 16 Mar 2026 &middot; 2 days</div>
+              <div style="font-size:10px;color:#6b7280;margin-top:4px;">Family function</div>
+            </div>
+            <span class="badge badge-green">Approved</span>
+          </div>
+          <div class="list-item">
+            <div>
+              <div class="list-item-title">Sick Leave</div>
+              <div class="list-item-sub">20 Mar 2026 &middot; 1 day</div>
+              <div style="font-size:10px;color:#6b7280;margin-top:4px;">Fever</div>
+            </div>
+            <span class="badge badge-green">Approved</span>
+          </div>
+          <div class="list-item">
+            <div>
+              <div class="list-item-title">Earned Leave</div>
+              <div class="list-item-sub">10 Apr — 12 Apr 2026 &middot; 3 days</div>
+              <div style="font-size:10px;color:#6b7280;margin-top:4px;">Personal travel</div>
+            </div>
+            <span class="badge badge-yellow">Pending</span>
+          </div>
+          <div class="list-item">
+            <div>
+              <div class="list-item-title">Half Day — CL</div>
+              <div class="list-item-sub">25 Apr 2026 &middot; 0.5 day</div>
+              <div style="font-size:10px;color:#6b7280;margin-top:4px;">Doctor appointment</div>
+            </div>
+            <span class="badge badge-blue">Upcoming</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item">
+          <div class="nav-icon">&#127968;</div>Home
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">&#128197;</div>Attendance
+        </div>
+        <div class="nav-item active">
+          <div class="nav-icon">&#9992;&#65039;</div>Leaves
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">&#128176;</div>Salary
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">&#128100;</div>Profile
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SALARY SCREEN ===== -->
+  <div class="phone-wrapper">
+    <div class="phone-label">Salary Slips</div>
+    <div class="phone">
+      <div class="status-bar">
+        <span class="time">9:41</span>
+        <div class="icons">
+          <span>&#9679;&#9679;&#9679;&#9679;</span>
+          <span>&#9016;</span>
+        </div>
+      </div>
+      <div class="app-bar">
+        <div class="app-bar-back">&#8592; Salary Slips</div>
+        <div class="app-bar-icon" style="font-size:14px;">&#128196;</div>
+      </div>
+      <div class="screen-content" style="padding-bottom:70px;">
+
+        <!-- Latest Salary -->
+        <div style="padding:16px;">
+          <div class="card" style="margin:0;background:linear-gradient(135deg,#0055A4 0%,#003d7a 100%);border:none;padding:20px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <div style="font-size:12px;color:rgba(255,255,255,0.7);font-weight:500;">March 2026</div>
+              <span style="background:rgba(255,255,255,0.15);color:white;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;">Latest</span>
+            </div>
+            <div style="font-size:32px;font-weight:800;color:white;letter-spacing:-1px;">&#8377;45,000</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;">Net Salary &middot; Credited 31 Mar</div>
+            <div style="display:flex;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.1);">
+              <div>
+                <div style="font-size:9px;color:rgba(255,255,255,0.5);">Gross</div>
+                <div style="font-size:13px;font-weight:600;color:white;">&#8377;50,000</div>
+              </div>
+              <div>
+                <div style="font-size:9px;color:rgba(255,255,255,0.5);">Deductions</div>
+                <div style="font-size:13px;font-weight:600;color:#fca5a5;">&#8377;5,000</div>
+              </div>
+              <div>
+                <div style="font-size:9px;color:rgba(255,255,255,0.5);">Days Worked</div>
+                <div style="font-size:13px;font-weight:600;color:white;">24/26</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Salary breakdown -->
+        <div class="section-header">Breakdown — March 2026</div>
+        <div style="margin:0 16px;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);border:1px solid #f0f0f0;">
+          <div class="list-item">
+            <div>
+              <div class="list-item-title">Basic Salary</div>
+              <div class="list-item-sub">Base pay</div>
+            </div>
+            <div style="font-size:13px;font-weight:700;color:#059669;">&#8377;30,000</div>
+          </div>
+          <div class="list-item">
+            <div>
+              <div class="list-item-title">HRA</div>
+              <div class="list-item-sub">House Rent Allowance</div>
+            </div>
+            <div style="font-size:13px;font-weight:700;color:#059669;">&#8377;12,000</div>
+          </div>
+          <div class="list-item">
+            <div>
+              <div class="list-item-title">Conveyance</div>
+              <div class="list-item-sub">Transport allowance</div>
+            </div>
+            <div style="font-size:13px;font-weight:700;color:#059669;">&#8377;8,000</div>
+          </div>
+          <div class="list-item" style="background:#fef2f2;">
+            <div>
+              <div class="list-item-title" style="color:#dc2626;">LWP Deduction</div>
+              <div class="list-item-sub">2 days unpaid leave</div>
+            </div>
+            <div style="font-size:13px;font-weight:700;color:#dc2626;">-&#8377;3,846</div>
+          </div>
+          <div class="list-item" style="background:#fef2f2;">
+            <div>
+              <div class="list-item-title" style="color:#dc2626;">PF Contribution</div>
+              <div class="list-item-sub">12% of basic</div>
+            </div>
+            <div style="font-size:13px;font-weight:700;color:#dc2626;">-&#8377;1,154</div>
+          </div>
+        </div>
+
+        <!-- Previous months -->
+        <div class="section-header">Previous Months</div>
+        <div style="margin:0 16px;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.06);border:1px solid #f0f0f0;">
+          <div class="list-item">
+            <div>
+              <div class="list-item-title">February 2026</div>
+              <div class="list-item-sub">24/24 days &middot; Credited 28 Feb</div>
+            </div>
+            <div style="font-size:14px;font-weight:700;color:#1f2937;">&#8377;48,000</div>
+          </div>
+          <div class="list-item">
+            <div>
+              <div class="list-item-title">January 2026</div>
+              <div class="list-item-sub">25/26 days &middot; Credited 31 Jan</div>
+            </div>
+            <div style="font-size:14px;font-weight:700;color:#1f2937;">&#8377;46,500</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-nav">
+        <div class="nav-item">
+          <div class="nav-icon">&#127968;</div>Home
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">&#128197;</div>Attendance
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">&#9992;&#65039;</div>Leaves
+        </div>
+        <div class="nav-item active">
+          <div class="nav-icon">&#128176;</div>Salary
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon">&#128100;</div>Profile
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ====== COLOR THEME ====== -->
+<div class="section-title">Kalina Brand Colors</div>
+<div class="palette">
+  <div class="color-swatch">
+    <div class="swatch" style="background:#0055A4;"></div>
+    <div class="swatch-label">Primary Dark</div>
+    <div class="swatch-hex">#0055A4</div>
+  </div>
+  <div class="color-swatch">
+    <div class="swatch" style="background:#4A9BD9;"></div>
+    <div class="swatch-label">Primary Light</div>
+    <div class="swatch-hex">#4A9BD9</div>
+  </div>
+  <div class="color-swatch">
+    <div class="swatch" style="background:#FFFFFF;border:1px solid #e5e7eb;"></div>
+    <div class="swatch-label">White</div>
+    <div class="swatch-hex">#FFFFFF</div>
+  </div>
+  <div class="color-swatch">
+    <div class="swatch" style="background:#F8F9FB;border:1px solid #e5e7eb;"></div>
+    <div class="swatch-label">Background</div>
+    <div class="swatch-hex">#F8F9FB</div>
+  </div>
+  <div class="color-swatch">
+    <div class="swatch" style="background:#1F2937;"></div>
+    <div class="swatch-label">Text Dark</div>
+    <div class="swatch-hex">#1F2937</div>
+  </div>
+  <div class="color-swatch">
+    <div class="swatch" style="background:#059669;"></div>
+    <div class="swatch-label">Success</div>
+    <div class="swatch-hex">#059669</div>
+  </div>
+  <div class="color-swatch">
+    <div class="swatch" style="background:#DC2626;"></div>
+    <div class="swatch-label">Error</div>
+    <div class="swatch-hex">#DC2626</div>
+  </div>
+  <div class="color-swatch">
+    <div class="swatch" style="background:#D97706;"></div>
+    <div class="swatch-label">Warning</div>
+    <div class="swatch-hex">#D97706</div>
+  </div>
+</div>
+
+<!-- ====== PACKAGES ====== -->
+<div class="section-title">Flutter Packages</div>
+<div class="packages-grid">
+  <div class="package-item"><div class="package-dot"></div><div><div class="package-name">flutter_riverpod</div><div class="package-desc">State management</div></div></div>
+  <div class="package-item"><div class="package-dot"></div><div><div class="package-name">dio</div><div class="package-desc">HTTP client + interceptors</div></div></div>
+  <div class="package-item"><div class="package-dot"></div><div><div class="package-name">go_router</div><div class="package-desc">Declarative navigation</div></div></div>
+  <div class="package-item"><div class="package-dot"></div><div><div class="package-name">local_auth</div><div class="package-desc">Fingerprint / Face ID</div></div></div>
+  <div class="package-item"><div class="package-dot"></div><div><div class="package-name">geolocator</div><div class="package-desc">GPS coordinates</div></div></div>
+  <div class="package-item"><div class="package-dot"></div><div><div class="package-name">persistent_device_id</div><div class="package-desc">Unique device binding</div></div></div>
+  <div class="package-item"><div class="package-dot"></div><div><div class="package-name">flutter_secure_storage</div><div class="package-desc">Encrypted token storage</div></div></div>
+  <div class="package-item"><div class="package-dot"></div><div><div class="package-name">firebase_messaging</div><div class="package-desc">Push notifications</div></div></div>
+  <div class="package-item"><div class="package-dot"></div><div><div class="package-name">hive_flutter</div><div class="package-desc">Local offline cache</div></div></div>
+  <div class="package-item"><div class="package-dot"></div><div><div class="package-name">safe_device</div><div class="package-desc">Fake GPS detection</div></div></div>
+  <div class="package-item"><div class="package-dot"></div><div><div class="package-name">intl</div><div class="package-desc">Date/time IST formatting</div></div></div>
+  <div class="package-item"><div class="package-dot"></div><div><div class="package-name">table_calendar</div><div class="package-desc">Attendance calendar view</div></div></div>
+</div>
+
+</body>
+</html>

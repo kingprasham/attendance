@@ -15,21 +15,39 @@ import '../features/notifications/screens/notifications_screen.dart';
 import '../features/holidays/screens/holidays_screen.dart';
 import '../shared/widgets/app_drawer.dart';
 
-final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+// Notifier that keeps a single GoRouter alive and refreshes its redirect
+// whenever auth state changes — avoids recreating the router on every change.
+class RouterNotifier extends ChangeNotifier {
+  final Ref _ref;
+  AuthStatus _status = AuthStatus.unknown;
 
+  RouterNotifier(this._ref) {
+    _ref.listen<AuthState>(authProvider, (_, next) {
+      if (_status != next.status) {
+        _status = next.status;
+        notifyListeners();
+      }
+    });
+  }
+
+  String? redirect(BuildContext context, GoRouterState state) {
+    final isAuth = _status == AuthStatus.authenticated;
+    final isLoggingIn = state.matchedLocation == '/login';
+    final isSplash = state.matchedLocation == '/';
+
+    if (isSplash) return null;
+    if (!isAuth && !isLoggingIn) return '/login';
+    if (isAuth && isLoggingIn) return '/home';
+    return null;
+  }
+}
+
+final routerProvider = Provider<GoRouter>((ref) {
+  final notifier = RouterNotifier(ref);
   return GoRouter(
     initialLocation: '/',
-    redirect: (context, state) {
-      final isAuth = authState.status == AuthStatus.authenticated;
-      final isLoggingIn = state.matchedLocation == '/login';
-      final isSplash = state.matchedLocation == '/';
-
-      if (isSplash) return null;
-      if (!isAuth && !isLoggingIn) return '/login';
-      if (isAuth && isLoggingIn) return '/home';
-      return null;
-    },
+    refreshListenable: notifier,
+    redirect: notifier.redirect,
     routes: [
       GoRoute(path: '/', builder: (_, __) => const SplashScreen()),
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
@@ -41,7 +59,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/salary/detail',
         builder: (_, state) {
-          final slipId = state.extra as int;
+          final raw = state.extra;
+          final slipId = raw is int ? raw : int.parse(raw.toString());
           return SlipDetailScreen(slipId: slipId);
         },
       ),

@@ -115,9 +115,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
               _InfoCard(title: 'KYC', fields: [
                 ('PAN Number', profile['pan_number'] ?? '-'),
-                ('Aadhar Number', profile['aadhar_number'] != null
-                    ? 'XXXX XXXX ${profile['aadhar_number'].toString().replaceAll(' ', '').substring(profile['aadhar_number'].toString().length > 4 ? profile['aadhar_number'].toString().length - 4 : 0)}'
-                    : '-'),
+                ('Aadhar Number', () {
+                    final a = profile['aadhar_number']?.toString().replaceAll(' ', '') ?? '';
+                    if (a.isEmpty) return '-';
+                    final last4 = a.length >= 4 ? a.substring(a.length - 4) : a;
+                    return 'XXXX XXXX $last4';
+                  }()),
               ]),
             ],
           ),
