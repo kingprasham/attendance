@@ -70,7 +70,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <!-- Filters -->
 <div class="card border-0 shadow-sm mb-3">
     <div class="card-body py-2">
-        <form class="row g-2 align-items-center">
+        <form class="row g-2 align-items-center filter-row">
             <div class="col-auto">
                 <label class="col-form-label fw-semibold small">Date</label>
             </div>

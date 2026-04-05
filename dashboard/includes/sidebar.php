@@ -7,6 +7,7 @@ function navLink(string $href, string $icon, string $label, string $current): st
     return "<a href=\"{$href}\" class=\"nav-link {$active}\"><i class=\"bi {$icon} me-2\"></i>{$label}</a>";
 }
 ?>
+<div id="sidebar-backdrop"></div>
 <div id="sidebar" class="d-flex flex-column flex-shrink-0 p-0">
     <!-- Brand -->
     <a href="<?= BASE_URL ?>/pages/dashboard.php"

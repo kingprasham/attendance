@@ -163,7 +163,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
         <i class="bi bi-calculator me-2 text-primary"></i>Generate Payroll
     </div>
     <div class="card-body">
-        <form method="POST" class="row g-3 align-items-end">
+        <form method="POST" class="row g-3 align-items-end filter-row">
             <input type="hidden" name="action" value="generate">
             <div class="col-md-3">
                 <label class="form-label fw-semibold">Branch *</label>
@@ -205,7 +205,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <!-- View Slips -->
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-white">
-        <form class="row g-2 align-items-center">
+        <form class="row g-2 align-items-center filter-row">
             <div class="col-auto fw-semibold">
                 <i class="bi bi-receipt me-1 text-primary"></i>Salary Slips
             </div>

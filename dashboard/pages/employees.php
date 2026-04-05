@@ -145,7 +145,7 @@ require_once __DIR__ . '/../includes/sidebar.php';
 <!-- Search + Filter -->
 <div class="card border-0 shadow-sm mb-3">
     <div class="card-body py-2">
-        <form class="row g-2 align-items-center">
+        <form class="row g-2 align-items-center filter-row">
             <div class="col-md-5">
                 <input type="text" name="q" class="form-control form-control-sm"
                        placeholder="Search name, code, email…" value="<?= htmlspecialchars($search) ?>">
